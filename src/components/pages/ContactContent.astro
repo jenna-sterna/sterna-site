@@ -1,0 +1,213 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { company } from "../../lib/data";
+import { getT, type Lang } from "../../lib/i18n";
+import { loadExperiences } from "../../lib/experiences";
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = getT(lang);
+
+const experiences = await loadExperiences();
+---
+
+<Layout lang={lang} title={`${t.contact.eyebrow} · ${company.name}`}>
+  <section class="page-hero">
+    <div class="container">
+      <p class="page-eyebrow">{t.contact.eyebrow}</p>
+      <h1 class="page-h1">
+        <span class="mask-line" data-stagger-index="0"><span>{t.contact.h1Line1}</span></span>
+        <span class="mask-line hero-italic" data-stagger-index="1"><span>{t.contact.h1Line2}</span></span>
+      </h1>
+      <p class="page-lead reveal" data-stagger-index="2">{t.contact.lead}</p>
+    </div>
+  </section>
+
+  <section class="contact-section" id="form">
+    <div class="container contact-grid">
+      <aside class="contact-side">
+        <div class="contact-block">
+          <span class="contact-eyebrow">{t.contact.whatsappLabel}</span>
+          <a href={company.whatsappHref} target="_blank" rel="noopener" class="contact-line">{company.whatsapp}</a>
+          <p>{t.contact.whatsappHint}</p>
+        </div>
+
+        <div class="contact-block">
+          <span class="contact-eyebrow">{t.contact.emailLabel}</span>
+          <a href={company.emailHref} class="contact-line">{company.email}</a>
+          <p>{t.contact.emailHint}</p>
+        </div>
+
+        <div class="contact-block">
+          <span class="contact-eyebrow">{t.contact.instaLabel}</span>
+          <a href={company.instagramUrl} target="_blank" rel="noopener" class="contact-line">{company.instagramHandle}</a>
+          <p>{t.contact.instaHint}</p>
+        </div>
+
+        <div class="contact-block">
+          <span class="contact-eyebrow">{t.contact.taLabel}</span>
+          <a href={company.tripadvisorUrl} target="_blank" rel="noopener" class="contact-line">{t.contact.taValue}</a>
+          <p>{t.contact.taHint}</p>
+        </div>
+
+        <div class="contact-block">
+          <span class="contact-eyebrow">{t.contact.basedLabel}</span>
+          <span class="contact-line">{t.contact.basedValue}</span>
+          <p>{t.contact.basedHint}</p>
+        </div>
+      </aside>
+
+      <div class="contact-form-wrap">
+        <form class="contact-form" data-email={company.email}>
+          <div class="field">
+            <label for="name">{t.contact.fName}</label>
+            <input id="name" name="name" type="text" required autocomplete="name" />
+          </div>
+
+          <div class="field">
+            <label for="email">{t.contact.fEmail}</label>
+            <input id="email" name="email" type="email" required autocomplete="email" />
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="dates">{t.contact.fDates}</label>
+              <input id="dates" name="dates" type="text" placeholder={t.contact.fDatesPh} />
+            </div>
+            <div class="field">
+              <label for="people">{t.contact.fPeople}</label>
+              <input id="people" name="people" type="number" min="1" max="20" placeholder={t.contact.fPeoplePh} />
+            </div>
+          </div>
+
+          <fieldset class="field">
+            <legend>{t.contact.fInterests}</legend>
+            <div class="checks">
+              {experiences.map((exp) => (
+                <label>
+                  <input type="checkbox" name="interests" value={exp.name.en}/> {exp.short[lang]}
+                </label>
+              ))}
+              <label>
+                <input type="checkbox" name="interests" value="Something custom"/> {t.contact.interestSomethingCustom}
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="notes">{t.contact.fNotes}</label>
+            <textarea id="notes" name="notes" rows="5" placeholder={t.contact.fNotesPh}></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">
+              {t.contact.fSubmit}
+              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+            <p class="form-note">
+              {t.contact.fNoteA}{" "}
+              <a href={company.whatsappHref} target="_blank" rel="noopener">{t.contact.fNoteB}</a>{t.contact.fNoteC}
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>(".contact-form");
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const interests = fd.getAll("interests").join(", ") || "(none selected)";
+    const body = `Hi Jenna, Carlos & Sandra,
+
+I'd love to plan an Aveiro experience with you.
+
+Name: ${fd.get("name") || ""}
+Email: ${fd.get("email") || ""}
+Dates: ${fd.get("dates") || ""}
+People: ${fd.get("people") || ""}
+Interested in: ${interests}
+
+Notes:
+${fd.get("notes") || ""}
+
+Thanks!`;
+    const subject = `Aveiro trip enquiry from ${fd.get("name") || ""}`.trim();
+    const email = form.dataset.email || "info@sterna.pt";
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
+</script>
+
+<style>
+  .page-hero { padding-block: clamp(4rem, 10vw, 7rem) clamp(3rem, 6vw, 4.5rem); background: var(--shell); border-bottom: 1px solid var(--line); }
+  .page-eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--teal-800); margin-bottom: 1.25rem; }
+  .page-h1 { font-size: var(--text-display); line-height: 1.02; margin-bottom: 2rem; }
+  .page-h1 .mask-line { display: block; }
+  .hero-italic { font-style: italic; color: var(--ochre-800); font-variation-settings: "opsz" 144; }
+  .page-lead { max-width: 62ch; font-size: var(--text-lead); color: var(--ink-soft); }
+
+  .contact-section { padding-block: var(--section-y-lg); }
+  .contact-grid { display: grid; grid-template-columns: 340px 1fr; gap: 4rem; align-items: start; }
+  .contact-side { display: flex; flex-direction: column; gap: 2rem; position: sticky; top: 120px; }
+  .contact-block { padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+  .contact-block:last-child { border-bottom: none; }
+  .contact-eyebrow { display: block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal-700); margin-bottom: 0.4rem; }
+  .contact-line { display: block; font-family: var(--font-display); font-size: 1.25rem; color: var(--ink); margin-bottom: 0.35rem; line-height: 1.3; }
+  a.contact-line { transition: color var(--dur-base) var(--ease-out); }
+  a.contact-line:hover { color: var(--teal-800); }
+  .contact-block p { font-size: 0.85rem; color: var(--ink-mute); }
+
+  .contact-form { background: var(--shell); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.5rem, 3vw, 2.5rem); display: flex; flex-direction: column; gap: 1.5rem; box-shadow: var(--shadow-soft); }
+  .contact-form .row { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.25rem; }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; border: 0; padding: 0; }
+  .field label, .field legend { font-size: 0.85rem; font-weight: 600; color: var(--ink); letter-spacing: 0.01em; }
+  .field input, .field textarea {
+    width: 100%; padding: 0.85rem 1rem;
+    border: 1px solid var(--line-strong); background: var(--paper);
+    border-radius: var(--radius); font: inherit; color: var(--ink);
+    transition: border-color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+  }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--teal-800); background: var(--shell); }
+  .field textarea { resize: vertical; min-height: 120px; }
+
+  .checks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem 0.75rem; margin-top: 0.5rem; }
+  .checks label {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.65rem;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+  }
+  .checks label:hover { background: var(--paper-warm); border-color: var(--line); }
+  .checks input {
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    margin-top: 0.2rem;
+    accent-color: var(--teal-800);
+    cursor: pointer;
+  }
+
+  .form-actions { display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-start; margin-top: 0.5rem; }
+  .form-note { font-size: 0.85rem; color: var(--ink-mute); }
+  .form-note a { color: var(--teal-800); border-bottom: 1px solid currentColor; }
+
+  @media (max-width: 900px) {
+    .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .contact-side { position: static; }
+    .checks { grid-template-columns: 1fr; }
+    .contact-form .row { grid-template-columns: 1fr; }
+  }
+</style>

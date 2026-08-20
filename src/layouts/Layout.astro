@@ -1,0 +1,184 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Preloader from "../components/Preloader.astro";
+import { company } from "../lib/data";
+import { getT, getLangFromUrl, type Lang } from "../lib/i18n";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  lang?: Lang;
+}
+
+const lang: Lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const t = getT(lang);
+
+const {
+  title = `${t.meta.defaultTitle} · ${t.meta.titleSuffix}`,
+  description = t.meta.defaultDescription,
+  image = "/og-default.jpg",
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImage = new URL(image, Astro.site).toString();
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "TravelAgency",
+  name: company.name,
+  description,
+  url: Astro.site?.toString(),
+  telephone: company.phone,
+  email: company.email,
+  image: ogImage,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: company.address.city,
+    addressRegion: company.address.region,
+    addressCountry: "PT",
+  },
+  foundingDate: company.established.toString(),
+  priceRange: "$$",
+  sameAs: [company.instagramUrl, company.tripadvisorUrl],
+};
+
+const htmlLang = lang === "pt" ? "pt" : "en";
+---
+
+<!doctype html>
+<html lang={htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={new URL(Astro.url.pathname.replace(/^\/pt/, "") || "/", Astro.site).toString()} />
+    <link rel="alternate" hreflang="pt" href={new URL("/pt" + (Astro.url.pathname.startsWith("/pt") ? Astro.url.pathname.slice(3) : Astro.url.pathname), Astro.site).toString()} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={lang === "pt" ? "pt_PT" : "en_US"} />
+    <meta property="og:site_name" content={company.name} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <meta name="theme-color" content="#1e4a54" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap" />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+
+    <ClientRouter />
+  </head>
+  <body>
+    <Preloader />
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header lang={lang} />
+    <main id="main"><slot /></main>
+    <Footer lang={lang} />
+
+    <script>
+      import Lenis from "lenis";
+      import { gsap } from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      let lenis: Lenis | null = null;
+      let rafId = 0;
+
+      function rafLoop(time: number) {
+        lenis?.raf(time);
+        rafId = requestAnimationFrame(rafLoop);
+      }
+
+      function setupLenis() {
+        if (reduce) return;
+        if (lenis) { lenis.destroy(); lenis = null; }
+        if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+        lenis = new Lenis({ lerp: 0.09, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1.5 });
+        lenis.on("scroll", ScrollTrigger.update);
+        rafId = requestAnimationFrame(rafLoop);
+      }
+
+      function setupReveals() {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const el = entry.target as HTMLElement;
+              el.classList.add("in");
+              const kids = el.querySelectorAll<HTMLElement>("[data-stagger-index]");
+              kids.forEach((kid) => {
+                const i = parseInt(kid.dataset.staggerIndex || "0", 10);
+                kid.style.setProperty("--reveal-delay", `${i * 90}ms`);
+              });
+              observer.unobserve(el);
+            }
+          },
+          { rootMargin: "-8% 0px", threshold: 0 },
+        );
+        const targets = document.querySelectorAll<HTMLElement>(
+          ".reveal, .mask-line, .photo-reveal, [data-reveal-group]",
+        );
+        targets.forEach((el) => observer.observe(el));
+      }
+
+      function setupParallax() {
+        if (reduce) return;
+        document.querySelectorAll<HTMLElement>("[data-parallax-y]").forEach((el) => {
+          const distance = parseFloat(el.dataset.parallaxY || "60");
+          gsap.fromTo(el, { y: distance }, {
+            y: -distance, ease: "none",
+            scrollTrigger: {
+              trigger: el.closest("[data-parallax-scope]") || el,
+              start: "top bottom", end: "bottom top", scrub: 1,
+            },
+          });
+        });
+      }
+
+      function init() {
+        setupLenis();
+        setupReveals();
+        setupParallax();
+      }
+
+      init();
+      document.addEventListener("astro:page-load", init);
+      document.addEventListener("astro:before-swap", () => {
+        ScrollTrigger.getAll().forEach((t) => t.kill());
+      });
+    </script>
+
+    <style>
+      .skip-link { position: absolute; left: -9999px; top: 0; background: var(--ink); color: var(--shell); padding: 0.75rem 1rem; z-index: 999; border-radius: 0 0 8px 0; }
+      .skip-link:focus { left: 0; }
+    </style>
+  </body>
+</html>

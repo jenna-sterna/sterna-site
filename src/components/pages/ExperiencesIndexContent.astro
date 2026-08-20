@@ -1,0 +1,138 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ExperienceCard from "../ExperienceCard.astro";
+import { loadFeaturedExperiences, loadMoreExperiences } from "../../lib/experiences";
+import { company } from "../../lib/data";
+import { getT, type Lang } from "../../lib/i18n";
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = getT(lang);
+
+const featuredExperiences = await loadFeaturedExperiences();
+const moreExperiences = await loadMoreExperiences();
+---
+
+<Layout lang={lang} title={`${t.xpPage.eyebrow} · ${company.name}`}>
+  <section class="page-hero">
+    <div class="container">
+      <p class="page-eyebrow">{t.xpPage.eyebrow}</p>
+      <h1 class="page-h1">
+        <span class="mask-line" data-stagger-index="0"><span>{t.xpPage.h1Line1}</span></span>
+        <span class="mask-line hero-italic" data-stagger-index="1"><span>{t.xpPage.h1Line2}</span></span>
+      </h1>
+      <p class="page-lead reveal" data-stagger-index="2">{t.xpPage.lead}</p>
+    </div>
+  </section>
+
+  <section class="xp-section">
+    <div class="container">
+      <div class="section-marker">
+        <span class="marker-num">01</span>
+        <span class="marker-line"></span>
+        <span class="marker-label">{t.xpPage.coreEyebrow}</span>
+      </div>
+      <h2 class="section-h2 mask-line"><span>{t.xpPage.coreH2}</span></h2>
+
+      <div class="xp-grid" data-reveal-group>
+        {featuredExperiences.map((exp, i) => (
+          <ExperienceCard exp={exp} lang={lang} index={i} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="xp-section soft">
+    <div class="container">
+      <div class="section-marker">
+        <span class="marker-num">02</span>
+        <span class="marker-line"></span>
+        <span class="marker-label">{t.xpPage.moreEyebrow}</span>
+      </div>
+      <h2 class="section-h2 mask-line"><span>{t.xpPage.moreH2}</span></h2>
+      <p class="section-lead reveal">{t.xpPage.moreLead}</p>
+
+      <div class="xp-grid" data-reveal-group>
+        {moreExperiences.map((exp, i) => (
+          <ExperienceCard exp={exp} lang={lang} index={i} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="custom-band">
+    <div class="custom-stripes" aria-hidden="true"></div>
+    <div class="container custom-inner">
+      <div class="section-marker">
+        <span class="marker-num">03</span>
+        <span class="marker-line"></span>
+        <span class="marker-label">{t.xpPage.customEyebrow}</span>
+      </div>
+      <h2 class="custom-h2 hero-italic">{t.xpPage.customH2}</h2>
+      <p class="custom-lead reveal">{t.xpPage.customLead}</p>
+      <div class="custom-ctas">
+        <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+          {t.cta.whatsapp} {company.whatsapp}
+        </a>
+        <a href={company.emailHref} class="btn btn-ghost btn-lg">{t.cta.email}</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-hero { padding-block: clamp(4rem, 10vw, 7rem) clamp(3rem, 6vw, 4.5rem); background: var(--shell); border-bottom: 1px solid var(--line); }
+  .page-eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--teal-800); margin-bottom: 1.25rem; }
+  .page-h1 { font-size: var(--text-display); line-height: 1.02; margin-bottom: 2rem; }
+  .page-h1 .mask-line { display: block; }
+  .hero-italic { font-style: italic; color: var(--ochre-800); font-variation-settings: "opsz" 144; }
+  .page-lead { max-width: 62ch; font-size: var(--text-lead); color: var(--ink-soft); }
+
+  .section-marker { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.5rem; }
+  .marker-num { font-family: var(--font-display); font-weight: 500; font-size: 1.05rem; color: var(--ochre-800); }
+  .marker-line { display: inline-block; width: 48px; height: 1px; background: var(--line-strong); }
+  .marker-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); }
+
+  .xp-section { padding-block: var(--section-y-lg); }
+  .xp-section.soft { background: var(--shell); }
+  .section-h2 { font-size: var(--text-h2); margin-bottom: 1rem; }
+  .section-lead { max-width: 60ch; font-size: var(--text-lead); color: var(--ink-soft); margin-bottom: 3rem; }
+  .xp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem 2.5rem; margin-top: 2rem; }
+  @media (max-width: 960px) { .xp-grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1.75rem; } }
+  @media (max-width: 620px) { .xp-grid { grid-template-columns: 1fr; } }
+
+  .custom-band {
+    background:
+      radial-gradient(ellipse at 80% 40%, rgba(224,168,106,0.15), transparent 60%),
+      var(--paper-warm);
+    padding-block: var(--section-y-lg);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  /* Costa Nova palheiro stripes — inspired by the striped fishermen's houses */
+  .custom-stripes {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 34%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--terracotta-700) 0 22px,
+      var(--paper) 22px 44px,
+      var(--teal-800) 44px 66px,
+      var(--paper) 66px 88px,
+      var(--ochre-700) 88px 110px,
+      var(--paper) 110px 132px
+    );
+    opacity: 0.14;
+    z-index: 0;
+    -webkit-mask-image: linear-gradient(to left, black 0%, transparent 100%);
+    mask-image: linear-gradient(to left, black 0%, transparent 100%);
+  }
+  .custom-inner { max-width: 780px; position: relative; z-index: 1; }
+  .custom-h2 { margin-bottom: 1.5rem; font-size: var(--text-h2); line-height: 1.1; }
+  .custom-lead { font-size: 1.1rem; color: var(--ink-soft); line-height: 1.65; }
+  .custom-ctas { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.85rem; }
+</style>

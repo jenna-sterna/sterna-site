@@ -1,0 +1,219 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ExperienceCard from "../ExperienceCard.astro";
+import { loadExperiences, type Experience } from "../../lib/experiences";
+import { company, path } from "../../lib/data";
+import { getT, type Lang } from "../../lib/i18n";
+
+interface Props { exp: Experience; lang: Lang; }
+const { exp, lang } = Astro.props;
+const t = getT(lang);
+
+const heroImage = exp.heroPhoto || null;
+const gallery = exp.gallery || [];
+
+const allExperiences = await loadExperiences();
+const relatedPool = allExperiences.filter((e) => e.slug !== exp.slug);
+const related = [...relatedPool.filter((e) => e.featured), ...relatedPool.filter((e) => !e.featured)].slice(0, 3);
+---
+
+<Layout lang={lang} title={`${exp.name[lang]} · ${company.name}`} description={exp.oneLiner[lang]}>
+  <section class="xp-hero" data-parallax-scope>
+    <div class="xp-hero-media">
+      {heroImage ? (
+        <img src={heroImage} alt={exp.name[lang]} loading="eager" class="xp-hero-img" data-parallax-y="60" />
+      ) : (
+        <div class="xp-hero-placeholder"></div>
+      )}
+      <div class="xp-hero-scrim"></div>
+    </div>
+
+    <div class="container xp-hero-inner">
+      <a href={path("/experiences/", lang)} class="back-link">{t.xpDetail.backLink}</a>
+      <span class="xp-hero-cat">{exp.categoryLabel[lang]} · {exp.duration[lang]}</span>
+      <h1 class="xp-hero-h1">
+        <span class="mask-line" data-stagger-index="0"><span>{exp.name[lang]}</span></span>
+      </h1>
+      <p class="xp-hero-lead reveal" data-stagger-index="1">{exp.oneLiner[lang]}</p>
+    </div>
+  </section>
+
+  <section class="xp-details">
+    <div class="container xp-details-grid">
+      <aside class="xp-side">
+        <div class="side-block">
+          <h4>{t.xpDetail.sideDuration}</h4>
+          <p>{exp.duration[lang]}</p>
+        </div>
+        <div class="side-block">
+          <h4>{t.xpDetail.sideGroup}</h4>
+          <p>{t.xpDetail.sideGroupText}</p>
+        </div>
+        <div class="side-block">
+          <h4>{t.xpDetail.sideLanguages}</h4>
+          <p>{t.xpDetail.sideLanguagesText}</p>
+        </div>
+        <div class="side-block">
+          <h4>{t.xpDetail.sidePrice}</h4>
+          <p>{exp.priceNote[lang]}</p>
+        </div>
+
+        <div class="side-cta">
+          <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+            {t.xpDetail.ctaQuote}
+          </a>
+          <a href={company.emailHref} class="btn btn-ghost">
+            {t.xpDetail.ctaEmail}
+          </a>
+        </div>
+      </aside>
+
+      <div class="xp-body">
+        {exp.press && (
+          <a class="xp-press reveal" href={exp.press.url} target="_blank" rel="noopener">
+            <span class="xp-press-source">As featured in {exp.press.source}</span>
+            <p class="xp-press-quote">“{exp.press.quote[lang]}”</p>
+            <span class="xp-press-cta">Read the article →</span>
+          </a>
+        )}
+
+        <div class="xp-included reveal">
+          <h3>{t.xpDetail.included}</h3>
+          <ul>
+            {exp.included[lang].map((i) => <li>{i}</li>)}
+          </ul>
+        </div>
+
+        {exp.addOns && (
+          <div class="xp-included reveal">
+            <h3>{t.xpDetail.addOns}</h3>
+            <ul class="addons">
+              {exp.addOns[lang].map((i) => <li>{i}</li>)}
+            </ul>
+          </div>
+        )}
+
+        <div class="xp-note reveal">
+          <p class="hand">{t.xpDetail.noteHand}</p>
+          <p>{t.xpDetail.noteBody}</p>
+          <p><span class="hand">{t.xpDetail.noteSig}</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {gallery.length > 0 && (
+    <section class="xp-gallery">
+      <div class="container">
+        <p class="page-eyebrow">{t.xpDetail.galleryEyebrow}</p>
+        <h2 class="mask-line"><span>{t.xpDetail.galleryH2}</span></h2>
+
+        <div class="gallery-grid" data-reveal-group>
+          {gallery.map((img, i) => (
+            <div class={`gallery-item photo-reveal item-${i % 5}`} data-stagger-index={i}>
+              <img src={img} alt={`${exp.name[lang]} ${i + 1}`} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="xp-related">
+    <div class="container">
+      <div class="section-marker">
+        <span class="marker-line"></span>
+        <span class="marker-label">{t.xpDetail.relatedEyebrow}</span>
+      </div>
+      <h2 class="mask-line section-h2"><span>{t.xpDetail.relatedH2}</span></h2>
+
+      <div class="xp-grid" data-reveal-group>
+        {related.map((r, i) => (
+          <ExperienceCard exp={r} lang={lang} index={i} />
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .xp-hero { position: relative; min-height: 78vh; display: flex; align-items: flex-end; padding-block: clamp(3rem, 8vh, 6rem); color: var(--shell); overflow: hidden; isolation: isolate; }
+  .xp-hero-media { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+  .xp-hero-img, .xp-hero-media :global(img) { width: 100%; height: 115%; object-fit: cover; }
+  .xp-hero-placeholder { width: 100%; height: 100%; background: linear-gradient(135deg, var(--teal-900), var(--teal-700), var(--ochre-800)); }
+  .xp-hero-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,47,54,0.35) 0%, rgba(15,47,54,0.15) 40%, rgba(15,47,54,0.75) 100%); }
+  .xp-hero-inner { max-width: 900px; }
+  .back-link { display: flex; align-items: center; width: fit-content; color: rgba(245,239,228,0.85); font-size: 0.85rem; margin-bottom: 1.75rem; padding-bottom: 2px; border-bottom: 1px solid rgba(245,239,228,0.3); transition: color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out); }
+  .back-link:hover { color: var(--ochre-500); border-color: var(--ochre-500); }
+  .xp-hero-cat { display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ochre-500); margin-bottom: 1.25rem; }
+  .xp-hero-h1 { font-size: clamp(2.25rem, 5vw, 4rem); color: var(--shell); line-height: 1.08; }
+  .xp-hero-lead { margin-top: 1.5rem; font-size: clamp(1.05rem, 1.3vw, 1.25rem); line-height: 1.55; color: rgba(245,239,228,0.9); max-width: 60ch; }
+
+  .xp-details { padding-block: var(--section-y-lg); }
+  .xp-details-grid { display: grid; grid-template-columns: 320px 1fr; gap: 4rem; align-items: start; }
+  .xp-side { position: sticky; top: 120px; display: flex; flex-direction: column; gap: 1.5rem; }
+  .side-block h4 { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal-700); margin-bottom: 0.35rem; font-family: var(--font-body); }
+  .side-block p { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.5; }
+  .side-cta { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+  .side-cta .btn { justify-content: center; }
+
+  .xp-body { display: flex; flex-direction: column; gap: 3rem; }
+  .xp-included h3 { margin-bottom: 1.25rem; }
+  .xp-included ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+  .xp-included li { padding-left: 1.75rem; position: relative; color: var(--ink-soft); line-height: 1.55; }
+  .xp-included li::before { content: ""; position: absolute; left: 0.15rem; top: 0.5rem; width: 12px; height: 12px; border: 2px solid var(--teal-800); border-radius: 50%; }
+  .xp-included li::after { content: ""; position: absolute; left: 0.45rem; top: 0.8rem; width: 6px; height: 6px; background: var(--ochre-700); border-radius: 50%; }
+  .xp-included ul.addons li::before { border-color: var(--ochre-700); }
+  .xp-included ul.addons li::after { background: var(--teal-800); }
+
+  .xp-press {
+    display: block;
+    background: linear-gradient(135deg, var(--teal-900), var(--teal-800));
+    color: var(--shell);
+    padding: 1.75rem 2rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    box-shadow: 0 16px 40px -22px rgba(15, 47, 54, 0.55);
+    transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+  }
+  .xp-press:hover { transform: translateY(-2px); box-shadow: 0 22px 48px -22px rgba(15, 47, 54, 0.65); }
+  .xp-press-source { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ochre-500); margin-bottom: 0.85rem; }
+  .xp-press-quote { font-family: var(--font-display); font-style: italic; font-size: 1.35rem; line-height: 1.45; margin: 0 0 1rem; color: var(--shell); }
+  .xp-press-cta { display: inline-block; font-size: 0.85rem; font-weight: 600; color: var(--ochre-500); border-bottom: 1px solid rgba(224, 168, 106, 0.4); padding-bottom: 2px; }
+  .xp-press:hover .xp-press-cta { color: var(--shell); border-color: var(--shell); }
+
+  .xp-note { background: var(--shell); border-left: 3px solid var(--ochre-700); padding: 1.75rem 2rem; border-radius: 0 var(--radius) var(--radius) 0; }
+  .xp-note p { color: var(--ink-soft); line-height: 1.6; margin-bottom: 1rem; }
+  .xp-note p:last-child { margin-bottom: 0; }
+  .xp-note .hand { font-size: 1.5rem; color: var(--ochre-800); }
+
+  @media (max-width: 900px) {
+    .xp-details-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .xp-side { position: static; }
+  }
+
+  .xp-gallery { padding-block: var(--section-y-lg); background: var(--shell); border-top: 1px solid var(--line); }
+  .page-eyebrow { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 0.5rem; }
+  .xp-gallery h2 { margin: 0.5rem 0 3rem; font-size: var(--text-h2); }
+  .gallery-grid { display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: 160px; gap: 1rem; }
+  .gallery-item { grid-column: span 2; grid-row: span 2; }
+  .gallery-item.item-0 { grid-column: span 3; grid-row: span 2; }
+  .gallery-item.item-1 { grid-column: span 3; grid-row: span 2; }
+  .gallery-item.item-2 { grid-column: span 2; grid-row: span 2; }
+  .gallery-item.item-3 { grid-column: span 2; grid-row: span 2; }
+  .gallery-item.item-4 { grid-column: span 2; grid-row: span 2; }
+  .gallery-item :global(img), .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 800px) {
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 200px; }
+    .gallery-item, .gallery-item.item-0, .gallery-item.item-1, .gallery-item.item-2, .gallery-item.item-3, .gallery-item.item-4 { grid-column: span 1; grid-row: span 1; }
+  }
+
+  .xp-related { padding-block: var(--section-y-lg); }
+  .section-marker { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem; }
+  .marker-line { display: inline-block; width: 48px; height: 1px; background: var(--line-strong); }
+  .marker-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); }
+  .section-h2 { font-size: var(--text-h2); margin-bottom: 3rem; }
+  .xp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem 2.5rem; }
+  @media (max-width: 960px) { .xp-grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1.75rem; } }
+  @media (max-width: 620px) { .xp-grid { grid-template-columns: 1fr; } }
+</style>

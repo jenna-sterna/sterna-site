@@ -1,0 +1,17 @@
+---
+import ExperienceDetailContent from "../../components/pages/ExperienceDetailContent.astro";
+import { loadExperiences, type Experience } from "../../lib/experiences";
+
+export async function getStaticPaths() {
+  const experiences = await loadExperiences();
+  return experiences.map((exp) => ({
+    params: { slug: exp.slug },
+    props: { exp },
+  }));
+}
+
+interface Props { exp: Experience; }
+const { exp } = Astro.props;
+---
+
+<ExperienceDetailContent exp={exp} lang="en" />

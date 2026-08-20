@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <rect width="40" height="40" rx="8" fill="#1e4a54"/>
+  <!-- Moliceiro boat -->
+  <path
+    d="M 4 22
+       L 24 22
+       Q 27 22, 28 20
+       L 32 12
+       Q 34 9, 35 12
+       Q 35 15, 33 16
+       L 30 22
+       Q 29 25, 25 25
+       L 9 25
+       Q 4 25, 4 22 Z"
+    fill="#f5efe4"
+  />
+  <!-- Water line -->
+  <path
+    d="M 6 30 Q 12 29, 18 30 T 30 30"
+    stroke="#e0a86a"
+    stroke-width="1.2"
+    stroke-linecap="round"
+    fill="none"
+  />
+</svg>

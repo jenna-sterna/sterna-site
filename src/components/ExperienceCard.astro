@@ -1,0 +1,63 @@
+---
+import type { Experience } from "../lib/experiences";
+import type { Lang } from "../lib/i18n";
+import { path } from "../lib/data";
+
+interface Props {
+  exp: Experience;
+  lang: Lang;
+  index?: number;
+  size?: "sm" | "md" | "lg";
+}
+
+const { exp, lang, index = 0, size = "md" } = Astro.props;
+const readMore = lang === "pt" ? "Saber mais" : "Read more";
+---
+
+<a href={path(`/experiences/${exp.slug}/`, lang)} class={`xp-card size-${size}`} data-stagger-index={index}>
+  <div class="xp-photo photo-reveal">
+    {exp.heroPhoto ? (
+      <img src={exp.heroPhoto} alt={exp.name[lang]} loading="lazy" />
+    ) : (
+      <div class="xp-placeholder"></div>
+    )}
+  </div>
+
+  <div class="xp-meta">
+    <span class="xp-cat">{exp.categoryLabel[lang]} · {exp.duration[lang]}</span>
+    <h3 class="xp-title">{exp.name[lang]}</h3>
+    <p class="xp-short">{exp.short[lang]}</p>
+    <span class="xp-cta">
+      {readMore}
+      <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M5 12h14M13 5l7 7-7 7"/>
+      </svg>
+    </span>
+  </div>
+</a>
+
+<style>
+  .xp-card { display: flex; flex-direction: column; gap: 1.2rem; text-decoration: none; color: inherit; transition: transform var(--dur-base) var(--ease-out); }
+  .xp-card:hover .xp-photo img { transform: scale(1.05); }
+  .xp-card:hover .xp-title { color: var(--teal-800); }
+  .xp-photo { aspect-ratio: 4/5; background: var(--paper-warm); overflow: hidden; border-radius: var(--radius-lg); }
+  .xp-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease-out); }
+  .size-lg .xp-photo { aspect-ratio: 3/4; }
+  .size-sm .xp-photo { aspect-ratio: 1/1; }
+  .xp-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--teal-100) 0%, var(--paper-warm) 50%, var(--ochre-100) 100%);
+    position: relative;
+  }
+  .xp-placeholder::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent 0 12px, rgba(30,74,84,0.03) 12px 13px);
+  }
+  .xp-meta { display: flex; flex-direction: column; gap: 0.5rem; }
+  .xp-cat { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal-700); }
+  .xp-title { font-size: var(--text-h4); color: var(--ink); transition: color var(--dur-base) var(--ease-out); line-height: 1.2; }
+  .xp-short { color: var(--ink-soft); font-size: 0.95rem; line-height: 1.5; }
+  .xp-cta { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.35rem; font-size: 0.85rem; font-weight: 600; color: var(--teal-800); letter-spacing: 0.02em; }
+</style>

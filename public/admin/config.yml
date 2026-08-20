@@ -1,0 +1,88 @@
+# Decap CMS configuration for Sterna Aveiro Tours
+#
+# In production this uses Netlify Identity + Git Gateway (must be enabled
+# in the Netlify dashboard after first deploy).
+# For local development, run `npx decap-server` in a second terminal and
+# open http://localhost:8772/admin/ — the CMS will use local_backend and
+# write files directly to disk.
+
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+site_url: https://sterna.pt
+display_url: https://sterna.pt
+logo_url: /favicon.svg
+
+collections:
+  - name: "experiences"
+    label: "Experiences"
+    label_singular: "Experience"
+    folder: "src/content/experiences"
+    format: "yaml-frontmatter"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: nameEn
+    summary: "{{nameEn}} — {{durationEn}}"
+    sortable_fields: ["order", "featured", "nameEn"]
+    fields:
+      - { label: "URL slug (no spaces, lowercase, dashes only)", name: "slug", widget: "string", hint: "Used in the page URL. Do not change once published." }
+      - { label: "Display order", name: "order", widget: "number", value_type: "int", min: 1, hint: "Lower numbers appear first." }
+      - { label: "Featured on homepage?", name: "featured", widget: "boolean", default: false, hint: "If yes, this experience appears in the homepage 'core 6' section." }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "Food & Wine", value: "food-wine" }
+          - { label: "Nature & Water", value: "nature-water" }
+          - { label: "Culture", value: "culture" }
+          - { label: "Wellness", value: "wellness" }
+
+      # --- English content ---
+      - { label: "Category label (EN)", name: "categoryLabelEn", widget: "string" }
+      - { label: "Name (EN)", name: "nameEn", widget: "string" }
+      - { label: "Short tagline (EN)", name: "shortEn", widget: "string", hint: "One short line shown on cards." }
+      - { label: "One-liner description (EN)", name: "oneLinerEn", widget: "text" }
+      - { label: "Duration (EN)", name: "durationEn", widget: "string", hint: "e.g. '4 hours', '5-6 hours', 'Half day'." }
+      - label: "What's included (EN)"
+        name: "includedEn"
+        widget: "list"
+        default: []
+        field: { label: "Item", name: "item", widget: "string" }
+      - label: "Optional add-ons (EN)"
+        name: "addOnsEn"
+        widget: "list"
+        required: false
+        field: { label: "Add-on", name: "item", widget: "string" }
+      - { label: "Price note (EN)", name: "priceNoteEn", widget: "text" }
+
+      # --- Portuguese content ---
+      - { label: "Category label (PT)", name: "categoryLabelPt", widget: "string" }
+      - { label: "Nome (PT)", name: "namePt", widget: "string" }
+      - { label: "Tagline curta (PT)", name: "shortPt", widget: "string" }
+      - { label: "Descrição (PT)", name: "oneLinerPt", widget: "text" }
+      - { label: "Duração (PT)", name: "durationPt", widget: "string" }
+      - label: "O que está incluído (PT)"
+        name: "includedPt"
+        widget: "list"
+        default: []
+        field: { label: "Item", name: "item", widget: "string" }
+      - label: "Extras opcionais (PT)"
+        name: "addOnsPt"
+        widget: "list"
+        required: false
+        field: { label: "Extra", name: "item", widget: "string" }
+      - { label: "Nota de preço (PT)", name: "priceNotePt", widget: "text" }
+
+      # --- Media ---
+      - { label: "Main photo", name: "heroPhoto", widget: "image", required: false, hint: "Landscape photo, 2000-3000px wide. Upload or pick from library." }
+      - label: "Gallery (extra photos)"
+        name: "gallery"
+        widget: "list"
+        required: false
+        field: { label: "Photo", name: "photo", widget: "image" }

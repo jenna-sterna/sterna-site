@@ -1,0 +1,877 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ExperienceCard from "../ExperienceCard.astro";
+import { company, path } from "../../lib/data";
+import { loadExperiences, loadFeaturedExperiences } from "../../lib/experiences";
+import { getT, type Lang } from "../../lib/i18n";
+import { reviews } from "../../lib/reviews";
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = getT(lang);
+
+const experiences = await loadExperiences();
+const featuredExperiences = await loadFeaturedExperiences();
+
+// All hero/decor photos now come from the CMS media folder (/public/uploads/).
+const heroImage = "/uploads/hero/aveiro-canal-hero.jpg";
+const saltPansImg = "/uploads/salt-pans/IMG_4709.jpg";
+const saltPansImgB = "/uploads/salt-pans/IMG_4710.jpg";
+const walkingImg = "/uploads/walking-tour/20260711_112249.jpg";
+const walkingImgB = "/uploads/walking-tour/20260711_120135.jpg";
+const walkingImgC = "/uploads/walking-tour/20260702_153535(1).jpg";
+
+// map by slug for the list section
+const bySlug = Object.fromEntries(experiences.map((e) => [e.slug, e]));
+const saltPans = bySlug["salt-pans-lunch"];
+const walking = bySlug["walking-tour"];
+const mealhada = bySlug["mealhada-sparkling-wine"];
+const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) => bySlug[s]);
+---
+
+<Layout lang={lang}>
+  <!-- ================= HERO ================= -->
+  <section class="hero" data-parallax-scope>
+    <div class="hero-media">
+      <img
+        src={heroImage}
+        alt="A moliceiro boat gliding down an Aveiro canal, lined with colorful buildings"
+        loading="eager"
+        class="hero-img"
+        data-parallax-y="80"
+      />
+      <div class="hero-scrim"></div>
+    </div>
+
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <span class="hero-eyebrow">{t.hero.eyebrow}</span>
+        <h1 class="hero-h1">
+          <span class="mask-line" data-stagger-index="0"><span>{t.hero.line1}</span></span>
+          <span class="mask-line" data-stagger-index="1"><span>{t.hero.line2}</span></span>
+          <span class="mask-line hero-italic" data-stagger-index="2"><span>{t.hero.line3}</span></span>
+        </h1>
+        <p class="hero-lead reveal" data-stagger-index="3">{t.hero.lead}</p>
+        <div class="hero-ctas reveal" data-stagger-index="4">
+          <a href={path("/experiences/", lang)} class="btn btn-primary btn-lg">
+            {t.hero.ctaPrimary}
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-ghost btn-lg hero-ghost">
+            {t.hero.ctaSecondary}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-scroll">
+      <span>{t.hero.scroll}</span>
+      <span class="hero-scroll-line"></span>
+    </div>
+  </section>
+
+  <!-- ================= INTRO (magazine-style with drop cap, no promise band) ================= -->
+  <section class="intro">
+    <div class="container-narrow">
+      <p class="intro-caption reveal">{t.intro.caption}</p>
+      <p class="intro-body reveal">
+        <span class="dropcap">A</span>{t.intro.body.slice(1)}
+      </p>
+      <p class="hand intro-sig reveal">{t.intro.sig}</p>
+    </div>
+  </section>
+
+  <!-- ================= FEATURED #01: SALT PANS (editorial hero) ================= -->
+  <section class="feature-01" data-parallax-scope>
+    <span class="watermark" aria-hidden="true" data-parallax-y="30">Aveiro</span>
+    <svg class="feature-glyph feature-glyph-tl" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+      <circle cx="60" cy="60" r="52" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4" opacity="0.35"/>
+      <circle cx="60" cy="60" r="34" stroke="currentColor" stroke-width="0.8" opacity="0.25"/>
+      <circle cx="60" cy="60" r="4" fill="currentColor" opacity="0.4"/>
+    </svg>
+    <div class="container feature-grid">
+      <div class="feature-photo-wrap">
+        <div class="photo-reveal feature-photo-main">
+          <img
+            src={saltPansImg}
+            alt="Marnoto working the salt pans"
+            class="parallax-img"
+            data-parallax-y="30"
+            loading="lazy"
+          />
+        </div>
+        <div class="photo-reveal feature-photo-mini">
+          <img src={saltPansImgB} alt="Salt pan detail" loading="lazy" />
+        </div>
+        <div class="annotation reveal" aria-hidden="true">
+          <span class="anno-text">{t.featured.annotation}</span>
+          <svg class="anno-arrow" viewBox="0 0 80 50" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 40 C 20 30, 40 15, 74 6"/>
+            <path d="M66 4 L 74 6 L 70 13"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="feature-body">
+        <div class="section-marker">
+          <span class="marker-num">{t.featured.number}</span>
+          <span class="marker-line"></span>
+          <span class="marker-label">{t.featured.eyebrow}</span>
+        </div>
+        <h2 class="feature-h2">
+          <span class="mask-line"><span>{t.featured.hookLine1}</span></span>
+          <span class="mask-line feature-h2-emph"><span>{t.featured.hookLine2}</span></span>
+        </h2>
+        <p class="feature-lead reveal">{t.featured.copyLead}</p>
+        <blockquote class="feature-pullquote reveal">
+          <p>&ldquo;{t.featured.pullQuote}&rdquo;</p>
+        </blockquote>
+        <a href={path(`/experiences/${saltPans.slug}/`, lang)} class="link-arrow reveal">
+          {t.featured.cta}
+          <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FEATURED DUO: WALKING TOUR + MEALHADA ================= -->
+  <section class="duo">
+    <div class="container">
+      <div class="duo-marker">
+        <span class="marker-line"></span>
+        <span class="marker-label">{t.duo.eyebrow}</span>
+      </div>
+
+      <div class="duo-grid" data-reveal-group>
+        <!-- Walking Tour -->
+        <a href={path(`/experiences/${walking.slug}/`, lang)} class="duo-item" data-stagger-index="0">
+          <div class="duo-kicker">{t.duo.w1Kicker}</div>
+          <div class="duo-photo photo-reveal">
+            <img src={walkingImg} alt={walking.name[lang]} loading="lazy" />
+          </div>
+          <h3>{walking.name[lang]}</h3>
+          <p>{walking.oneLiner[lang]}</p>
+          <span class="duo-cta">
+            {lang === "pt" ? "Ver mais" : "Read more"}
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <!-- Mealhada -->
+        <a href={path(`/experiences/${mealhada.slug}/`, lang)} class="duo-item duo-item-tilt" data-stagger-index="1">
+          <div class="duo-kicker">{t.duo.w2Kicker}</div>
+          <div class="duo-photo photo-reveal">
+            <img src={mealhada.heroPhoto} alt={mealhada.name[lang]} loading="lazy" />
+          </div>
+          <h3>{mealhada.name[lang]}</h3>
+          <p>{mealhada.oneLiner[lang]}</p>
+          <span class="duo-cta">
+            {lang === "pt" ? "Ver mais" : "Read more"}
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FEATURED LIST (text-forward, no card grid) ================= -->
+  <section class="list-exp">
+    <div class="container list-grid">
+      <div class="list-intro">
+        <div class="list-marker">
+          <span class="marker-line"></span>
+          <span class="marker-label">{t.listExp.eyebrow}</span>
+        </div>
+        <p class="list-lead reveal">
+          {t.listExp.leadPrefix} <em>{t.listExp.leadEmph}</em>
+        </p>
+      </div>
+
+      <ul class="list-items" data-reveal-group>
+        {listExperiences.map((exp, i) => (
+          <li class="list-item" data-stagger-index={i}>
+            <a href={path(`/experiences/${exp.slug}/`, lang)}>
+              <div class="list-item-num">0{i + 4}</div>
+              <div class="list-item-body">
+                <h3>{exp.name[lang]}</h3>
+                <p>{exp.short[lang]} · {exp.duration[lang]}</p>
+              </div>
+              <span class="list-item-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="list-foot reveal">
+        <a href={path("/experiences/", lang)} class="btn btn-ghost">
+          {t.listExp.ctaAll}
+          <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHY (long-form, no bullet list) ================= -->
+  <section class="why">
+    <div class="container why-inner">
+      <div class="why-marker">
+        <span class="marker-line"></span>
+        <span class="marker-label">{t.whyList.eyebrow}</span>
+      </div>
+      <h2 class="why-h2">
+        <span class="mask-line"><span>{t.whyList.h2}</span></span>
+      </h2>
+      <p class="why-body reveal">{t.whyList.body}</p>
+      <p class="why-ask reveal hand">{t.whyList.ask}</p>
+    </div>
+  </section>
+
+  <!-- ================= REAL PROOF (real TripAdvisor reviews, verbatim) ================= -->
+  <section class="proof">
+    <div class="container">
+      <div class="proof-head">
+        <h2>
+          <span class="mask-line"><span>{t.proof.h2Line1}</span></span>
+          <span class="mask-line proof-h2-emph"><span>{t.proof.h2Line2}</span></span>
+        </h2>
+        <p class="proof-lead reveal">{t.proof.lead}</p>
+      </div>
+
+      <div class="reviews-grid" data-reveal-group>
+        {reviews.slice(0, 6).map((r, i) => (
+          <figure class="review-card" data-stagger-index={i}>
+            <div class="review-stars" aria-label="Five stars">★★★★★</div>
+            <blockquote>{r.quote}</blockquote>
+            <figcaption>
+              <span class="review-name">{r.name}</span>
+              {r.location && <span class="review-meta"> · {r.location}</span>}
+              <span class="review-meta"> · {r.visited}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <div class="proof-foot reveal">
+        <a href={company.tripadvisorUrl} target="_blank" rel="noopener" class="proof-cta">
+          {t.proof.cta}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOUNDERS TEASER (short, no full card grid) ================= -->
+  <section class="founders-teaser">
+    <div class="container founders-inner">
+      <div class="founders-copy">
+        <div class="section-marker">
+          <span class="marker-line"></span>
+          <span class="marker-label">{t.founders.eyebrow}</span>
+        </div>
+        <h2 class="founders-h2">
+          <span class="mask-line"><span>{t.founders.h2Line1}</span></span>
+          <span class="mask-line founders-h2-emph"><span>{t.founders.h2Line2}</span></span>
+        </h2>
+        <p class="founders-body reveal">{t.founders.body}</p>
+        <a href={path("/about/", lang)} class="link-arrow reveal">
+          {t.founders.ctaMore}
+          <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="founders-photo-strip" aria-hidden="true">
+        <div class="founders-mini photo-reveal"><img src={walkingImgC} alt="" loading="lazy" /></div>
+        <div class="founders-mini photo-reveal founders-mini-tilt"><img src={walkingImgB} alt="" loading="lazy" /></div>
+        <div class="founders-mini photo-reveal"><img src={saltPansImgB} alt="" loading="lazy" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SINGLE CTA (kept minimal) ================= -->
+  <section class="cta-band">
+    <div class="container cta-inner">
+      <div class="cta-copy">
+        <h2 class="cta-h2">{t.cta.h2}</h2>
+        <p class="cta-lead">{t.cta.lead} <span class="hand">{t.cta.obrigado}</span></p>
+      </div>
+      <div class="cta-actions">
+        <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-ochre btn-lg">
+          {t.cta.whatsapp} {company.whatsapp}
+        </a>
+        <a href={company.emailHref} class="btn btn-ghost btn-lg cta-ghost">{t.cta.email}</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    align-items: flex-end;
+    padding-block: clamp(4rem, 10vh, 8rem);
+    overflow: hidden;
+    isolation: isolate;
+    color: var(--shell);
+  }
+  .hero-media { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+  .hero-img, .hero-media :global(img.hero-img) { width: 100%; height: 115%; object-fit: cover; }
+  .hero-scrim {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(15,47,54,0.35) 0%, rgba(15,47,54,0.20) 15%, rgba(15,47,54,0.80) 55%, rgba(15,47,54,1) 100%),
+      radial-gradient(ellipse 90% 100% at 25% 85%, rgba(15,47,54,0.88), transparent 72%);
+  }
+  .hero-inner { width: 100%; }
+  .hero-text { max-width: 780px; }
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ochre-500);
+    margin-bottom: 1.5rem;
+  }
+  .hero-h1 { font-size: var(--text-display); color: var(--shell); line-height: 1.02; }
+  .hero-h1 .mask-line { display: block; }
+  .hero-italic { font-style: italic; color: var(--ochre-500); font-variation-settings: "opsz" 144; }
+  .hero-lead {
+    margin-top: 2rem;
+    font-size: clamp(1.1rem, 1.4vw, 1.35rem);
+    line-height: 1.6;
+    color: var(--shell);
+    font-weight: 500;
+    max-width: 58ch;
+    text-shadow: 0 1px 3px rgba(15, 47, 54, 0.9), 0 0 24px rgba(15, 47, 54, 0.6);
+  }
+  .hero-h1 { text-shadow: 0 2px 8px rgba(15, 47, 54, 0.5), 0 0 32px rgba(15, 47, 54, 0.35); }
+  .hero-ctas { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2rem; }
+  .hero-ghost {
+    background: rgba(245,239,228,0.08);
+    color: var(--shell);
+    border-color: rgba(245,239,228,0.35);
+    backdrop-filter: blur(6px);
+  }
+  .hero-ghost:hover { background: var(--shell); color: var(--teal-900); border-color: var(--shell); }
+  .hero-scroll {
+    position: absolute; right: var(--gutter); bottom: 2rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase;
+    color: rgba(245,239,228,0.7);
+  }
+  .hero-scroll-line {
+    width: 40px; height: 1px; background: currentColor;
+    display: inline-block; position: relative; overflow: hidden;
+  }
+  .hero-scroll-line::after {
+    content: ""; position: absolute; inset: 0;
+    background: var(--ochre-500);
+    animation: scrollhint 2.4s cubic-bezier(0.65,0,0.35,1) infinite;
+  }
+  @keyframes scrollhint {
+    0% { transform: translateX(-100%); }
+    60% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+  @media (max-width: 720px) {
+    .hero { min-height: 88vh; }
+    .hero-h1 { font-size: clamp(2.75rem, 12vw, 4.5rem); }
+    .hero-scroll { display: none; }
+    .hero-scrim {
+      background:
+        linear-gradient(180deg, rgba(15,47,54,0.45) 0%, rgba(15,47,54,0.50) 25%, rgba(15,47,54,0.92) 55%, rgba(15,47,54,1) 75%, rgba(15,47,54,1) 100%),
+        radial-gradient(ellipse 140% 100% at 30% 85%, rgba(15,47,54,0.85), transparent 78%);
+    }
+    .hero-lead {
+      text-shadow: 0 1px 4px rgba(15, 47, 54, 0.95), 0 0 20px rgba(15, 47, 54, 0.7);
+    }
+    .hero-h1 { text-shadow: 0 2px 10px rgba(15, 47, 54, 0.7), 0 0 24px rgba(15, 47, 54, 0.5); }
+  }
+
+  /* ---------- INTRO ---------- */
+  .intro { padding-block: clamp(5rem, 8vw, 7rem); background: var(--shell); border-bottom: 1px solid var(--line); }
+  .intro-caption {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal-700);
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  .intro-body {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.25rem, 1.75vw, 1.6rem);
+    line-height: 1.5;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .dropcap {
+    float: left;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 4.5em;
+    line-height: 0.9;
+    padding: 0.05em 0.12em 0 0;
+    color: var(--ochre-800);
+    font-variation-settings: "opsz" 144;
+  }
+  .intro-sig {
+    font-size: 1.75rem;
+    text-align: center;
+    margin-top: 3rem;
+    color: var(--ochre-800);
+  }
+
+  /* ---------- SECTION MARKERS (replaces most eyebrows) ---------- */
+  .section-marker, .duo-marker, .list-marker, .why-marker {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+  .marker-num {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--ochre-800);
+    letter-spacing: 0.02em;
+  }
+  .marker-line {
+    display: inline-block;
+    width: 48px;
+    height: 1px;
+    background: var(--line-strong);
+  }
+  .marker-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  /* ---------- FEATURE 01: SALT PANS ---------- */
+  .feature-01 {
+    padding-block: var(--section-y-lg);
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 90% 15%, var(--blush-100) 0%, transparent 50%),
+      radial-gradient(ellipse at 10% 100%, var(--ochre-100) 0%, transparent 55%),
+      var(--blush-50);
+  }
+  .watermark {
+    position: absolute;
+    top: 42%;
+    left: -3vw;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(12rem, 24vw, 26rem);
+    line-height: 0.85;
+    color: var(--terracotta-800);
+    opacity: 0.06;
+    letter-spacing: -0.04em;
+    pointer-events: none;
+    z-index: 0;
+    white-space: nowrap;
+    transform: translateY(-40%);
+    font-variation-settings: "opsz" 144;
+  }
+  .feature-glyph {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    color: var(--terracotta-700);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .feature-glyph-tl {
+    top: 6%;
+    left: 5%;
+    animation: spin-slow 60s linear infinite;
+  }
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 4.5rem;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .feature-photo-wrap { position: relative; }
+  .feature-photo-main { aspect-ratio: 4/5; }
+  .feature-photo-main :global(img.parallax-img), .feature-photo-main img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .feature-photo-mini {
+    position: absolute;
+    right: -3rem;
+    bottom: -3rem;
+    width: 42%;
+    aspect-ratio: 4/5;
+    border: 8px solid var(--paper);
+    box-shadow: var(--shadow-lift);
+    transform: rotate(3deg);
+  }
+  .feature-photo-mini :global(img), .feature-photo-mini img { width: 100%; height: 100%; object-fit: cover; }
+  .annotation {
+    position: absolute;
+    left: 5%;
+    bottom: 6%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 210px;
+    color: #fff;
+    padding: 0.75rem 1rem 0.85rem;
+    background: rgba(15, 47, 54, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px -10px rgba(15,47,54,0.5);
+    transform: rotate(-2deg);
+    opacity: 0;
+    animation: annoIn 900ms 900ms var(--ease-out) forwards;
+    z-index: 2;
+  }
+  @keyframes annoIn {
+    from { opacity: 0; transform: rotate(-2deg) translateY(10px); }
+    to { opacity: 1; transform: rotate(-2deg) translateY(0); }
+  }
+  .anno-arrow {
+    width: 68px;
+    height: 42px;
+    color: var(--ochre-500);
+    margin-top: 0.35rem;
+    align-self: flex-end;
+    transform: rotate(4deg);
+  }
+  .anno-text {
+    font-family: var(--font-hand);
+    font-size: 1.35rem;
+    color: var(--ochre-500);
+    line-height: 1.15;
+    text-align: left;
+  }
+
+  .feature-h2 { font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1.1; margin-bottom: 1.5rem; }
+  .feature-h2 .mask-line { display: block; }
+  .feature-h2-emph { font-style: italic; color: var(--ochre-800); font-variation-settings: "opsz" 144; }
+  .feature-lead { color: var(--ink-soft); line-height: 1.6; margin-bottom: 2rem; font-size: 1.05rem; }
+  .feature-pullquote {
+    border-left: 3px solid var(--ochre-700);
+    padding: 0.25rem 0 0.25rem 1.5rem;
+    margin: 0 0 2rem;
+  }
+  .feature-pullquote p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.35rem;
+    line-height: 1.4;
+    color: var(--ink);
+    font-variation-settings: "opsz" 96;
+  }
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: var(--teal-800);
+    padding-bottom: 3px;
+    border-bottom: 1px solid currentColor;
+    transition: color var(--dur-base) var(--ease-out), gap var(--dur-base) var(--ease-out);
+  }
+  .link-arrow:hover { color: var(--teal-900); gap: 0.7rem; }
+
+  @media (max-width: 900px) {
+    .feature-grid { grid-template-columns: 1fr; gap: 4rem; }
+    .feature-photo-mini { right: -0.5rem; bottom: -1.5rem; width: 38%; }
+    .annotation { left: 4%; bottom: 4%; max-width: 170px; padding: 0.6rem 0.85rem 0.7rem; }
+    .annotation .anno-text { font-size: 1.1rem; }
+    .anno-arrow { width: 54px; height: 34px; }
+  }
+  @media (max-width: 520px) {
+    .annotation { display: none; }
+    .hero-ctas { flex-direction: column; align-items: stretch; }
+    .hero-ctas .btn { width: 100%; justify-content: center; }
+  }
+
+  /* ---------- DUO ---------- */
+  .duo { padding-block: var(--section-y-lg); background: var(--shell); }
+  .duo-marker { justify-content: center; margin-bottom: 3rem; }
+  .duo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+  .duo-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .duo-item:hover .duo-photo :global(img) { transform: scale(1.03); }
+  .duo-item:hover h3 { color: var(--teal-800); }
+  .duo-item-tilt { transform: translateY(2rem); }
+  @media (max-width: 900px) {
+    .duo-grid { grid-template-columns: 1fr; gap: 3.5rem; }
+    .duo-item-tilt { transform: none; }
+    .duo-item-tilt { transform: none; }
+  }
+  .duo-kicker {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--teal-700);
+  }
+  .duo-photo { aspect-ratio: 5/4; }
+  .duo-photo :global(img), .duo-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease-out); }
+  .duo-photo-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--ochre-100) 0%, var(--paper-warm) 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ochre-800);
+  }
+  .duo-photo-placeholder svg { width: 55%; height: 55%; }
+  .duo-item h3 {
+    font-size: clamp(1.5rem, 2vw, 1.85rem);
+    line-height: 1.2;
+    margin-top: 0.5rem;
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .duo-item p { color: var(--ink-soft); line-height: 1.55; font-size: 0.98rem; }
+  .duo-cta { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; color: var(--teal-800); margin-top: 0.35rem; }
+
+  /* ---------- LIST EXPERIENCES ---------- */
+  .list-exp { padding-block: var(--section-y-lg); }
+  .list-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.4fr;
+    gap: 4rem;
+  }
+  .list-intro { position: sticky; top: 130px; align-self: start; }
+  .list-lead { font-family: var(--font-display); font-size: clamp(1.35rem, 1.7vw, 1.75rem); line-height: 1.4; color: var(--ink); letter-spacing: -0.005em; }
+  .list-lead em { font-style: italic; color: var(--ochre-800); font-variation-settings: "opsz" 144; }
+  .list-items { list-style: none; padding: 0; margin: 0; }
+  .list-item { border-bottom: 1px solid var(--line); }
+  .list-item:first-child { border-top: 1px solid var(--line); }
+  .list-item a {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 2rem;
+    align-items: center;
+    padding: 2rem 0.5rem;
+    transition: padding var(--dur-base) var(--ease-out);
+  }
+  .list-item a:hover { padding-left: 1.25rem; }
+  .list-item a:hover h3 { color: var(--teal-800); }
+  .list-item a:hover .list-item-arrow { transform: translateX(6px); color: var(--teal-800); }
+  .list-item-num { font-family: var(--font-display); font-size: 1.1rem; color: var(--ochre-800); font-weight: 500; }
+  .list-item-body h3 { font-size: clamp(1.25rem, 1.7vw, 1.6rem); line-height: 1.25; margin-bottom: 0.25rem; transition: color var(--dur-base) var(--ease-out); }
+  .list-item-body p { color: var(--ink-mute); font-size: 0.9rem; }
+  .list-item-arrow {
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--ink-mute);
+    transition: transform var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+  }
+  .list-item-arrow svg { width: 20px; height: 20px; }
+  .list-foot { margin-top: 3rem; text-align: right; }
+  @media (max-width: 900px) {
+    .list-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .list-intro { position: static; }
+    .list-item a { grid-template-columns: auto 1fr; gap: 1.5rem; }
+    .list-item-arrow { display: none; }
+  }
+
+  /* ---------- WHY (deep terracotta pop) ---------- */
+  .why {
+    padding-block: var(--section-y-lg);
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(122,42,30,0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 90% 80%, rgba(224,168,106,0.28) 0%, transparent 60%),
+      var(--terracotta-800);
+    color: var(--shell);
+    position: relative;
+    overflow: hidden;
+  }
+  .why::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><defs><pattern id='p' patternUnits='userSpaceOnUse' width='60' height='60'><circle cx='30' cy='30' r='1' fill='%23f5efe4' opacity='0.2'/></pattern></defs><rect width='100%25' height='100%25' fill='url(%23p)'/></svg>");
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .why-inner { max-width: 780px; margin-inline: auto; position: relative; z-index: 1; }
+  .why-marker { justify-content: flex-start; margin-bottom: 1.5rem; }
+  .why-marker .marker-line { background: rgba(245,239,228,0.4); }
+  .why-marker .marker-label { color: rgba(245,239,228,0.75); }
+  .why-h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(2.25rem, 3.4vw, 3rem);
+    line-height: 1.1;
+    color: var(--shell);
+    margin-bottom: 2rem;
+    font-variation-settings: "opsz" 144;
+  }
+  .why-body { color: rgba(245,239,228,0.88); line-height: 1.7; font-size: 1.1rem; margin-bottom: 1.5rem; }
+  .why-ask { font-size: 1.85rem; color: var(--ochre-500); }
+
+  /* ---------- PROOF (real TripAdvisor reviews) ---------- */
+  .proof { padding-block: var(--section-y-lg); background: var(--teal-900); color: var(--shell); }
+  .proof-head { max-width: 720px; margin-bottom: 3.5rem; }
+  .proof h2 {
+    font-size: clamp(2rem, 3.4vw, 3rem);
+    line-height: 1.1;
+    color: var(--shell);
+    margin-bottom: 1.5rem;
+  }
+  .proof h2 .mask-line { display: block; }
+  .proof-h2-emph { font-style: italic; color: var(--ochre-500); font-variation-settings: "opsz" 144; }
+  .proof-lead { color: rgba(245,239,228,0.85); line-height: 1.6; font-size: 1.05rem; max-width: 55ch; }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .review-card {
+    background: rgba(245, 239, 228, 0.05);
+    border: 1px solid rgba(245, 239, 228, 0.14);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0;
+    transition: background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+  }
+  .review-card:hover {
+    background: rgba(245, 239, 228, 0.08);
+    border-color: rgba(245, 239, 228, 0.24);
+    transform: translateY(-2px);
+  }
+  .review-stars {
+    color: var(--ochre-500);
+    letter-spacing: 0.15em;
+    font-size: 1rem;
+    line-height: 1;
+  }
+  .review-card blockquote {
+    margin: 0;
+    color: rgba(245, 239, 228, 0.92);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    font-weight: 400;
+    quotes: none;
+    flex: 1;
+  }
+  .review-card figcaption {
+    font-size: 0.8rem;
+    color: rgba(245, 239, 228, 0.6);
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(245, 239, 228, 0.12);
+    letter-spacing: 0.02em;
+  }
+  .review-name { font-weight: 600; color: rgba(245, 239, 228, 0.85); }
+  .review-meta { color: rgba(245, 239, 228, 0.55); }
+
+  .proof-foot { margin-top: 2.5rem; text-align: center; }
+  .proof-cta {
+    display: inline-block;
+    font-weight: 600;
+    color: var(--ochre-500);
+    padding-bottom: 4px;
+    border-bottom: 1px solid currentColor;
+    letter-spacing: 0.02em;
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .proof-cta:hover { color: var(--shell); }
+
+  @media (max-width: 900px) {
+    .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    .reviews-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .proof-head { margin-bottom: 2rem; }
+    .review-card { padding: 1.5rem 1.5rem 1.25rem; }
+  }
+
+  /* ---------- FOUNDERS TEASER ---------- */
+  .founders-teaser { padding-block: var(--section-y-lg); }
+  .founders-inner {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .founders-h2 { font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1.1; margin-bottom: 1.5rem; }
+  .founders-h2 .mask-line { display: block; }
+  .founders-h2-emph { font-style: italic; color: var(--ochre-800); font-variation-settings: "opsz" 144; }
+  .founders-body { color: var(--ink-soft); line-height: 1.65; margin-bottom: 2rem; font-size: 1.05rem; max-width: 55ch; }
+  .founders-photo-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .founders-mini {
+    aspect-ratio: 3/4;
+    border: 6px solid var(--paper);
+    box-shadow: var(--shadow-soft);
+  }
+  .founders-mini :global(img), .founders-mini img { width: 100%; height: 100%; object-fit: cover; }
+  .founders-mini-tilt { transform: rotate(-3deg) translateY(-1rem); }
+  @media (max-width: 900px) {
+    .founders-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .founders-mini-tilt { transform: none; }
+  }
+
+  /* ---------- CTA ---------- */
+  .cta-band {
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(224,168,106,0.25), transparent 60%),
+      var(--teal-800);
+    color: var(--shell);
+    padding-block: var(--section-y);
+  }
+  .cta-inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  .cta-h2 {
+    font-size: clamp(1.75rem, 2.8vw, 2.4rem);
+    color: var(--shell);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin-bottom: 0.75rem;
+  }
+  .cta-lead { color: rgba(245,239,228,0.85); font-size: 1.05rem; }
+  .cta-lead .hand { color: var(--ochre-500); font-size: 1.35rem; margin-left: 0.35rem; }
+  .cta-actions { display: flex; flex-direction: column; gap: 0.85rem; }
+  .cta-actions .btn { justify-content: center; }
+  .cta-ghost { background: transparent; color: var(--shell); border-color: rgba(245,239,228,0.5); }
+  .cta-ghost:hover { background: var(--shell); color: var(--teal-900); border-color: var(--shell); }
+  @media (max-width: 820px) { .cta-inner { grid-template-columns: 1fr; } }
+</style>

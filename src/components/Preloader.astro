@@ -1,0 +1,173 @@
+---
+// Runs once per session on cold visit. Waits for fonts + hero image
+// so the fade to page is seamless (no font flash, no image pop-in).
+// ~1.4s minimum, ~2.5s cap. No skip button.
+---
+
+<div class="preloader" id="preloader" data-preloader hidden aria-hidden="true">
+  <div class="preloader-inner">
+    <img class="preloader-mark" src="/uploads/brand/sterna-experiences-full.png" alt="Sterna Aveiro Experiences" />
+  </div>
+</div>
+
+<style>
+  .preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper);
+    color: var(--teal-900);
+    overflow: hidden;
+    opacity: 1;
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 750ms;
+  }
+
+  .preloader[hidden] { display: none !important; }
+
+  .preloader.is-lifting {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .preloader-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    transform: translateY(6px);
+    animation: prel-in 380ms 40ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .preloader.is-lifting .preloader-inner {
+    animation: prel-out 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes prel-in { to { opacity: 1; transform: none; } }
+  @keyframes prel-out {
+    to { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  }
+
+  .preloader-mark {
+    width: clamp(240px, 42vw, 460px);
+    height: auto;
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+    animation: prel-mark-in 900ms 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes prel-mark-in {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  :global(body.is-preloading) {
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preloader { display: none !important; }
+  }
+</style>
+
+<script>
+  const KEY = "sterna:preloader-seen";
+  const MIN_MS = 1400;   // minimum animation time so it feels intentional
+  const CAP_MS = 2500;   // cap so we never leave user stuck
+
+  function safeGet(): boolean {
+    try { return sessionStorage.getItem(KEY) === "1"; } catch { return false; }
+  }
+  function safeSet(): void {
+    try { sessionStorage.setItem(KEY, "1"); } catch {}
+  }
+
+  function waitForAssets(): Promise<void> {
+    const fontsReady = (document.fonts && (document.fonts as unknown as { ready?: Promise<unknown> }).ready)
+      ? (document.fonts as unknown as { ready: Promise<unknown> }).ready.then(() => undefined).catch(() => undefined)
+      : Promise.resolve();
+
+    const heroImg = document.querySelector<HTMLImageElement>(
+      ".hero-img, .xp-hero-img, main img[loading='eager']",
+    );
+    const imgReady: Promise<void> = heroImg
+      ? new Promise((resolve) => {
+          if (heroImg.complete && heroImg.naturalWidth > 0) return resolve();
+          const done = () => resolve();
+          heroImg.addEventListener("load", done, { once: true });
+          heroImg.addEventListener("error", done, { once: true });
+        })
+      : Promise.resolve();
+
+    return Promise.all([fontsReady, imgReady]).then(() => undefined);
+  }
+
+  function lift(el: HTMLElement) {
+    el.classList.add("is-lifting");
+    // Cleanup after fade completes
+    window.setTimeout(() => {
+      el.hidden = true;
+      document.body.classList.remove("is-preloading");
+    }, 800);
+    safeSet();
+  }
+
+  async function initPreloader() {
+    const el = document.getElementById("preloader");
+    if (!el) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || safeGet()) {
+      el.hidden = true;
+      document.body.classList.remove("is-preloading");
+      return;
+    }
+
+    try {
+      // Show + lock scroll
+      el.hidden = false;
+      document.body.classList.add("is-preloading");
+
+      // Force a paint before starting the timer, in case DOM is not ready
+      await new Promise<void>((r) => requestAnimationFrame(() => r()));
+
+      const minWait = new Promise<void>((r) => window.setTimeout(r, MIN_MS));
+      const readyOrCap = Promise.race([
+        waitForAssets(),
+        new Promise<void>((r) => window.setTimeout(r, CAP_MS)),
+      ]);
+
+      await Promise.all([minWait, readyOrCap]);
+      lift(el);
+    } catch {
+      // Never trap the user — force-lift on any error
+      lift(el);
+    }
+  }
+
+  // Safety net: if anything fails silently and the preloader stays visible
+  // longer than the cap + a buffer, force it away.
+  window.setTimeout(() => {
+    const el = document.getElementById("preloader");
+    if (!el || el.hidden) return;
+    if (el.classList.contains("is-lifting")) return;
+    lift(el);
+  }, CAP_MS + 1500);
+
+  initPreloader();
+
+  // Astro view transitions: on any subsequent page load, ensure the freshly
+  // rendered preloader stays hidden (sessionStorage flag was set on first fire).
+  document.addEventListener("astro:page-load", () => {
+    const el = document.getElementById("preloader");
+    if (!el) return;
+    if (safeGet()) {
+      el.hidden = true;
+      document.body.classList.remove("is-preloading");
+    }
+  });
+</script>
