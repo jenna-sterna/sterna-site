@@ -6,7 +6,7 @@ category: food-wine
 categoryLabelEn: Food & Wine
 nameEn: A Day with Leitão & Sparkling Wine in Mealhada
 shortEn: Cave tour, tasting, leitão lunch
-oneLinerEn: Explore the caves of Messias (or another local sparkling-wine estate), taste through their range, then sit down to leitão (tender roasted pork with homemade fries and salad) at a local restaurant. More sparkling wine, of course....
+oneLinerEn: Explore the caves of Messias (or another local sparkling-wine estate), taste through their range, then sit down to leitão (tender roasted pork with homemade fries and salad) at a local restaurant. More sparkling wine, of course.
 durationEn: 5 hours
 includedEn:
   - Pick-up & drop-off from Aveiro city center
