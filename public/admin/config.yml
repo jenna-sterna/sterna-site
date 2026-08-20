@@ -11,6 +11,7 @@ backend:
   name: github
   repo: Bduncs2/sterna-site
   branch: main
+  base_url: https://sveltia-cms-auth.braidenduncan1.workers.dev
 
 local_backend: true
 
