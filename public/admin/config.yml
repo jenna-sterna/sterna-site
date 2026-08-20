@@ -1,13 +1,15 @@
-# Decap CMS configuration for Sterna Aveiro Tours
+# Sveltia CMS configuration for Sterna Aveiro Tours
 #
-# In production this uses Netlify Identity + Git Gateway (must be enabled
-# in the Netlify dashboard after first deploy).
-# For local development, run `npx decap-server` in a second terminal and
-# open http://localhost:8772/admin/ — the CMS will use local_backend and
-# write files directly to disk.
+# Uses GitHub OAuth for authentication (Netlify Identity is deprecated for
+# new sites). Editors sign in with their GitHub account and must be
+# collaborators on the Bduncs2/sterna-site repo.
+#
+# For local development, run `npx @sveltia/cms-proxy-server` in a second
+# terminal and open http://localhost:4321/admin/ — writes to disk directly.
 
 backend:
-  name: git-gateway
+  name: github
+  repo: Bduncs2/sterna-site
   branch: main
 
 local_backend: true
