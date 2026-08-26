@@ -4,8 +4,8 @@ import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Preloader from "../components/Preloader.astro";
-import { company } from "../lib/data";
-import { getT, getLangFromUrl, type Lang } from "../lib/i18n";
+import { getLangFromUrl, type Lang } from "../lib/i18n";
+import { getCompany, getPage, pick } from "../lib/siteData";
 
 interface Props {
   title?: string;
@@ -16,11 +16,12 @@ interface Props {
 }
 
 const lang: Lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
-const t = getT(lang);
+const company = await getCompany();
+const meta = await getPage("meta");
 
 const {
-  title = `${t.meta.defaultTitle} · ${t.meta.titleSuffix}`,
-  description = t.meta.defaultDescription,
+  title = `${pick(meta, "defaultTitle", lang)} · ${pick(meta, "titleSuffix", lang)}`,
+  description = pick(meta, "defaultDescription", lang),
   image = "/og-default.jpg",
   noindex = false,
 } = Astro.props;

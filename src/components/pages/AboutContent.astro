@@ -1,26 +1,31 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { company, founders, path } from "../../lib/data";
-import { getT, type Lang } from "../../lib/i18n";
+import { path } from "../../lib/data";
+import type { Lang } from "../../lib/i18n";
+import { getCompany, getFounders, getPage, pick } from "../../lib/siteData";
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
-const t = getT(lang);
+const about = await getPage("about");
+const home = await getPage("home"); // for shared CTA copy
+const company = await getCompany();
+const founders = await getFounders();
 
 const bussacoImg = "/uploads/walking-tour/20260711_120135.jpg";
 const boatImg = "/uploads/boat-tour/20260704_204620~2.jpg";
+const storyPara1 = pick(about, "storyPara1", lang);
 ---
 
-<Layout lang={lang} title={`${t.about.eyebrow} · ${company.name}`}>
+<Layout lang={lang} title={`${pick(about, "eyebrow", lang)} · ${company.name}`}>
   <!-- Hero -->
   <section class="page-hero">
     <div class="container">
-      <p class="page-eyebrow">{t.about.eyebrow}</p>
+      <p class="page-eyebrow">{pick(about, "eyebrow", lang)}</p>
       <h1 class="page-h1">
-        <span class="mask-line" data-stagger-index="0"><span>{t.about.h1Line1}</span></span>
-        <span class="mask-line hero-italic" data-stagger-index="1"><span>{t.about.h1Line2}</span></span>
+        <span class="mask-line" data-stagger-index="0"><span>{pick(about, "h1Line1", lang)}</span></span>
+        <span class="mask-line hero-italic" data-stagger-index="1"><span>{pick(about, "h1Line2", lang)}</span></span>
       </h1>
-      <p class="page-lead reveal" data-stagger-index="2">{t.about.lead}</p>
+      <p class="page-lead reveal" data-stagger-index="2">{pick(about, "lead", lang)}</p>
     </div>
   </section>
 
@@ -31,16 +36,16 @@ const boatImg = "/uploads/boat-tour/20260704_204620~2.jpg";
         <div class="section-marker">
           <span class="marker-num">01</span>
           <span class="marker-line"></span>
-          <span class="marker-label">{t.about.storyH2}</span>
+          <span class="marker-label">{pick(about, "storyH2", lang)}</span>
         </div>
 
         <p class="story-para story-para-lead">
-          <span class="dropcap">{t.about.storyPara1.charAt(0)}</span>{t.about.storyPara1.slice(1)}
+          <span class="dropcap">{storyPara1.charAt(0)}</span>{storyPara1.slice(1)}
         </p>
-        <p class="story-para reveal">{t.about.storyPara2}</p>
-        <p class="story-para reveal">{t.about.storyPara3}</p>
-        <p class="story-para reveal">{t.about.storyPara4}</p>
-        <p class="story-sig reveal">{t.about.storySig}</p>
+        <p class="story-para reveal">{pick(about, "storyPara2", lang)}</p>
+        <p class="story-para reveal">{pick(about, "storyPara3", lang)}</p>
+        <p class="story-para reveal">{pick(about, "storyPara4", lang)}</p>
+        <p class="story-sig reveal">{pick(about, "storySig", lang)}</p>
       </div>
 
       <div class="story-media">
@@ -64,7 +69,7 @@ const boatImg = "/uploads/boat-tour/20260704_204620~2.jpg";
       <div class="section-marker">
         <span class="marker-num">02</span>
         <span class="marker-line"></span>
-        <span class="marker-label">{t.about.meetH2}</span>
+        <span class="marker-label">{pick(about, "meetH2", lang)}</span>
       </div>
 
       <div class="founders-grid" data-reveal-group>
@@ -101,14 +106,14 @@ const boatImg = "/uploads/boat-tour/20260704_204620~2.jpg";
         <div class="section-marker">
           <span class="marker-num">03</span>
           <span class="marker-line"></span>
-          <span class="marker-label">{t.about.whyEyebrow}</span>
+          <span class="marker-label">{pick(about, "whyEyebrow", lang)}</span>
         </div>
         <h2 class="why-h2">
-          <span class="mask-line"><span>{t.about.whyH2Line1}</span></span>
-          <span class="mask-line why-h2-emph"><span>{t.about.whyH2Line2}</span></span>
+          <span class="mask-line"><span>{pick(about, "whyH2Line1", lang)}</span></span>
+          <span class="mask-line why-h2-emph"><span>{pick(about, "whyH2Line2", lang)}</span></span>
         </h2>
-        <p class="why-lead reveal">{t.about.whyLead}</p>
-        <p class="why-body-text reveal">{t.about.whyBody}</p>
+        <p class="why-lead reveal">{pick(about, "whyLead", lang)}</p>
+        <p class="why-body-text reveal">{pick(about, "whyBody", lang)}</p>
       </div>
     </div>
   </section>
@@ -117,14 +122,14 @@ const boatImg = "/uploads/boat-tour/20260704_204620~2.jpg";
   <section class="cta-band">
     <div class="container cta-inner">
       <div class="cta-copy">
-        <h2 class="cta-h2">{t.cta.h2}</h2>
-        <p class="cta-lead">{t.cta.lead} <span class="hand">{t.cta.obrigado}</span></p>
+        <h2 class="cta-h2">{pick(home, "cta_h2", lang)}</h2>
+        <p class="cta-lead">{pick(home, "cta_lead", lang)} <span class="hand">{pick(home, "cta_obrigado", lang)}</span></p>
       </div>
       <div class="cta-actions">
         <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-ochre btn-lg">
-          {t.cta.whatsapp} {company.whatsapp}
+          {pick(home, "cta_whatsapp", lang)} {company.whatsapp}
         </a>
-        <a href={company.emailHref} class="btn btn-ghost btn-lg cta-ghost">{t.cta.email}</a>
+        <a href={company.emailHref} class="btn btn-ghost btn-lg cta-ghost">{pick(home, "cta_email", lang)}</a>
       </div>
     </div>
   </section>

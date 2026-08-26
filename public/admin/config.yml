@@ -23,6 +23,9 @@ display_url: https://sterna.pt
 logo_url: /favicon.svg
 
 collections:
+  # ==========================================================
+  # EXPERIENCES (existing — do not refactor)
+  # ==========================================================
   - name: "experiences"
     label: "Experiences"
     label_singular: "Experience"
@@ -89,3 +92,489 @@ collections:
         widget: "list"
         required: false
         field: { label: "Photo", name: "photo", widget: "image" }
+
+  # ==========================================================
+  # FOUNDERS (Jenna, Carlos, Sandra)
+  # ==========================================================
+  - name: "founders"
+    label: "Founders"
+    label_singular: "Founder"
+    folder: "src/content/founders"
+    format: "yaml-frontmatter"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: nameEn
+    summary: "{{nameEn}} — {{roleEn}}"
+    sortable_fields: ["order", "nameEn"]
+    fields:
+      - { label: "Display order", name: "order", widget: "number", value_type: "int", min: 1 }
+      - { label: "URL slug (lowercase, no spaces)", name: "slug", widget: "string" }
+      - { label: "Name (English)", name: "nameEn", widget: "string" }
+      - { label: "Name (Portuguese)", name: "namePt", widget: "string" }
+      - { label: "Role (English)", name: "roleEn", widget: "string" }
+      - { label: "Role (Portuguese)", name: "rolePt", widget: "string" }
+      - { label: "Origin / background (English)", name: "originEn", widget: "string", hint: "Short one-line origin note, e.g. 'USA → Aveiro, 2025'." }
+      - { label: "Origin / background (Portuguese)", name: "originPt", widget: "string" }
+      - { label: "Bio line (English)", name: "lineEn", widget: "text" }
+      - { label: "Bio line (Portuguese)", name: "linePt", widget: "text" }
+      - { label: "Photo", name: "photo", widget: "image", required: false }
+
+  # ==========================================================
+  # FAQs (one entry per Q&A pair)
+  # ==========================================================
+  - name: "faqs"
+    label: "FAQs"
+    label_singular: "FAQ"
+    folder: "src/content/faqs"
+    format: "yaml-frontmatter"
+    create: true
+    slug: "{{order}}-{{slug}}"
+    identifier_field: questionEn
+    summary: "{{order}} · {{questionEn}}"
+    sortable_fields: ["order", "questionEn"]
+    fields:
+      - { label: "Display order", name: "order", widget: "number", value_type: "int", min: 1 }
+      - { label: "Question (English)", name: "questionEn", widget: "string" }
+      - { label: "Question (Portuguese)", name: "questionPt", widget: "string" }
+      - { label: "Answer (English)", name: "answerEn", widget: "markdown" }
+      - { label: "Answer (Portuguese)", name: "answerPt", widget: "markdown" }
+
+  # ==========================================================
+  # REVIEWS (real TripAdvisor / Google reviews)
+  # ==========================================================
+  - name: "reviews"
+    label: "Reviews"
+    label_singular: "Review"
+    folder: "src/content/reviews"
+    format: "yaml-frontmatter"
+    create: true
+    slug: "{{order}}-{{slug}}"
+    identifier_field: authorName
+    summary: "{{order}} · {{authorName}}"
+    sortable_fields: ["order", "authorName"]
+    fields:
+      - { label: "Display order", name: "order", widget: "number", value_type: "int", min: 1 }
+      - { label: "Reviewer name", name: "authorName", widget: "string" }
+      - { label: "Meta (city and/or date)", name: "authorMeta", widget: "string", hint: "e.g. 'London, UK · September 2025' or just 'September 2025'." }
+      - { label: "Star rating (1-5)", name: "rating", widget: "number", value_type: "int", min: 1, max: 5, default: 5 }
+      - { label: "Quote (English)", name: "quoteEn", widget: "markdown" }
+      - { label: "Quote (Portuguese)", name: "quotePt", widget: "markdown" }
+
+  # ==========================================================
+  # SITE SETTINGS (company info, trust badges)
+  # ==========================================================
+  - name: "settings"
+    label: "Site settings"
+    editor: { preview: false }
+    files:
+      - name: "company"
+        label: "Company / contact info"
+        file: "src/content/settings/company.yml"
+        fields:
+          - { label: "Company name", name: "name", widget: "string" }
+          - { label: "Short name", name: "shortName", widget: "string" }
+          - { label: "Phone (display)", name: "phone", widget: "string" }
+          - { label: "Phone link (tel:...)", name: "phoneHref", widget: "string" }
+          - { label: "WhatsApp (display)", name: "whatsapp", widget: "string" }
+          - { label: "WhatsApp link (https://wa.me/...)", name: "whatsappHref", widget: "string" }
+          - { label: "Email address", name: "email", widget: "string" }
+          - { label: "Email link (mailto:...)", name: "emailHref", widget: "string" }
+          - { label: "Instagram handle", name: "instagramHandle", widget: "string" }
+          - { label: "Instagram URL", name: "instagramUrl", widget: "string" }
+          - { label: "TripAdvisor URL", name: "tripadvisorUrl", widget: "string" }
+          - { label: "Review count (e.g. 300+)", name: "reviewCount", widget: "string" }
+          - { label: "Year established", name: "established", widget: "number", value_type: "int" }
+          - { label: "Address — city", name: "addressCity", widget: "string" }
+          - { label: "Address — region", name: "addressRegion", widget: "string" }
+          - { label: "Address — country", name: "addressCountry", widget: "string" }
+          - { label: "Max group size", name: "maxGroupSize", widget: "number", value_type: "int" }
+
+      - name: "trust"
+        label: "Trust badges"
+        file: "src/content/settings/trust.yml"
+        fields:
+          - label: "Badges"
+            name: "badges"
+            widget: "list"
+            fields:
+              - { label: "Badge (English)", name: "en", widget: "string" }
+              - { label: "Badge (Portuguese)", name: "pt", widget: "string" }
+
+  # ==========================================================
+  # PAGE COPY (site-wide + per-page strings)
+  # Each entry is one page's worth of copy.
+  # EN and PT variants are separate fields with _en / _pt suffix.
+  # ==========================================================
+  - name: "pages"
+    label: "Page content"
+    editor: { preview: false }
+    files:
+      - name: "meta"
+        label: "Meta / SEO defaults"
+        file: "src/content/pages/meta.yml"
+        fields:
+          - { label: "Title suffix (English)", name: "titleSuffix_en", widget: "string", hint: "Appended to every page title, e.g. '· Sterna Aveiro Experiences'." }
+          - { label: "Title suffix (Portuguese)", name: "titleSuffix_pt", widget: "string" }
+          - { label: "Default page title (English)", name: "defaultTitle_en", widget: "string" }
+          - { label: "Default page title (Portuguese)", name: "defaultTitle_pt", widget: "string" }
+          - { label: "Default meta description (English)", name: "defaultDescription_en", widget: "text" }
+          - { label: "Default meta description (Portuguese)", name: "defaultDescription_pt", widget: "text" }
+
+      - name: "nav"
+        label: "Navigation labels"
+        file: "src/content/pages/nav.yml"
+        fields:
+          - { label: "Home (English)", name: "home_en", widget: "string" }
+          - { label: "Home (Portuguese)", name: "home_pt", widget: "string" }
+          - { label: "Experiences (English)", name: "experiences_en", widget: "string" }
+          - { label: "Experiences (Portuguese)", name: "experiences_pt", widget: "string" }
+          - { label: "About (English)", name: "about_en", widget: "string" }
+          - { label: "About (Portuguese)", name: "about_pt", widget: "string" }
+          - { label: "FAQ (English)", name: "faq_en", widget: "string" }
+          - { label: "FAQ (Portuguese)", name: "faq_pt", widget: "string" }
+          - { label: "Contact (English)", name: "contact_en", widget: "string" }
+          - { label: "Contact (Portuguese)", name: "contact_pt", widget: "string" }
+          - { label: "Plan-your-trip CTA (English)", name: "plan_en", widget: "string" }
+          - { label: "Plan-your-trip CTA (Portuguese)", name: "plan_pt", widget: "string" }
+          - { label: "WhatsApp button label (English)", name: "whatsapp_en", widget: "string" }
+          - { label: "WhatsApp button label (Portuguese)", name: "whatsapp_pt", widget: "string" }
+          - { label: "Language toggle label (English mode)", name: "langLabel_en", widget: "string" }
+          - { label: "Language toggle label (Portuguese mode)", name: "langLabel_pt", widget: "string" }
+          - { label: "Language toggle aria-label (English mode)", name: "langAriaLabel_en", widget: "string" }
+          - { label: "Language toggle aria-label (Portuguese mode)", name: "langAriaLabel_pt", widget: "string" }
+
+      - name: "footer"
+        label: "Footer copy"
+        file: "src/content/pages/footer.yml"
+        fields:
+          - { label: "Tagline (English)", name: "tagline_en", widget: "string" }
+          - { label: "Tagline (Portuguese)", name: "tagline_pt", widget: "string" }
+          - { label: "Chip 1 (English)", name: "chip1_en", widget: "string" }
+          - { label: "Chip 1 (Portuguese)", name: "chip1_pt", widget: "string" }
+          - { label: "Chip 2 (English)", name: "chip2_en", widget: "string" }
+          - { label: "Chip 2 (Portuguese)", name: "chip2_pt", widget: "string" }
+          - { label: "Chip 3 (English)", name: "chip3_en", widget: "string" }
+          - { label: "Chip 3 (Portuguese)", name: "chip3_pt", widget: "string" }
+          - { label: "Column heading — Explore (English)", name: "colExplore_en", widget: "string" }
+          - { label: "Column heading — Explore (Portuguese)", name: "colExplore_pt", widget: "string" }
+          - { label: "Column heading — Experiences (English)", name: "colExperiences_en", widget: "string" }
+          - { label: "Column heading — Experiences (Portuguese)", name: "colExperiences_pt", widget: "string" }
+          - { label: "Column heading — Contact (English)", name: "colContact_en", widget: "string" }
+          - { label: "Column heading — Contact (Portuguese)", name: "colContact_pt", widget: "string" }
+          - { label: "Rights prefix (English)", name: "rightsPrefix_en", widget: "string" }
+          - { label: "Rights prefix (Portuguese)", name: "rightsPrefix_pt", widget: "string" }
+          - { label: "Rights suffix (English)", name: "rightsSuffix_en", widget: "string" }
+          - { label: "Rights suffix (Portuguese)", name: "rightsSuffix_pt", widget: "string" }
+          - { label: "Obrigado line (English)", name: "obrigado_en", widget: "string" }
+          - { label: "Obrigado line (Portuguese)", name: "obrigado_pt", widget: "string" }
+          - { label: "TripAdvisor link text (English)", name: "tripadvisorLinkText_en", widget: "string" }
+          - { label: "TripAdvisor link text (Portuguese)", name: "tripadvisorLinkText_pt", widget: "string" }
+
+      - name: "home"
+        label: "Home page copy"
+        file: "src/content/pages/home.yml"
+        fields:
+          # Hero
+          - { label: "Hero eyebrow (English)", name: "hero_eyebrow_en", widget: "string" }
+          - { label: "Hero eyebrow (Portuguese)", name: "hero_eyebrow_pt", widget: "string" }
+          - { label: "Hero headline line 1 (English)", name: "hero_line1_en", widget: "string" }
+          - { label: "Hero headline line 1 (Portuguese)", name: "hero_line1_pt", widget: "string" }
+          - { label: "Hero headline line 2 (English)", name: "hero_line2_en", widget: "string" }
+          - { label: "Hero headline line 2 (Portuguese)", name: "hero_line2_pt", widget: "string" }
+          - { label: "Hero headline line 3 (English)", name: "hero_line3_en", widget: "string" }
+          - { label: "Hero headline line 3 (Portuguese)", name: "hero_line3_pt", widget: "string" }
+          - { label: "Hero lead paragraph (English)", name: "hero_lead_en", widget: "markdown" }
+          - { label: "Hero lead paragraph (Portuguese)", name: "hero_lead_pt", widget: "markdown" }
+          - { label: "Hero primary CTA (English)", name: "hero_ctaPrimary_en", widget: "string" }
+          - { label: "Hero primary CTA (Portuguese)", name: "hero_ctaPrimary_pt", widget: "string" }
+          - { label: "Hero secondary CTA (English)", name: "hero_ctaSecondary_en", widget: "string" }
+          - { label: "Hero secondary CTA (Portuguese)", name: "hero_ctaSecondary_pt", widget: "string" }
+          - { label: "Hero trust prefix (English)", name: "hero_trustPrefix_en", widget: "string", required: false }
+          - { label: "Hero trust prefix (Portuguese)", name: "hero_trustPrefix_pt", widget: "string", required: false }
+          - { label: "Hero trust number (English)", name: "hero_trustNumber_en", widget: "string" }
+          - { label: "Hero trust number (Portuguese)", name: "hero_trustNumber_pt", widget: "string" }
+          - { label: "Hero trust suffix (English)", name: "hero_trustSuffix_en", widget: "string" }
+          - { label: "Hero trust suffix (Portuguese)", name: "hero_trustSuffix_pt", widget: "string" }
+          - { label: "Hero scroll label (English)", name: "hero_scroll_en", widget: "string" }
+          - { label: "Hero scroll label (Portuguese)", name: "hero_scroll_pt", widget: "string" }
+
+          # Intro
+          - { label: "Intro caption (English)", name: "intro_caption_en", widget: "string" }
+          - { label: "Intro caption (Portuguese)", name: "intro_caption_pt", widget: "string" }
+          - { label: "Intro body (English)", name: "intro_body_en", widget: "markdown" }
+          - { label: "Intro body (Portuguese)", name: "intro_body_pt", widget: "markdown" }
+          - { label: "Intro signature (English)", name: "intro_sig_en", widget: "string" }
+          - { label: "Intro signature (Portuguese)", name: "intro_sig_pt", widget: "string" }
+
+          # Featured
+          - { label: "Featured number (English)", name: "featured_number_en", widget: "string" }
+          - { label: "Featured number (Portuguese)", name: "featured_number_pt", widget: "string" }
+          - { label: "Featured eyebrow (English)", name: "featured_eyebrow_en", widget: "string" }
+          - { label: "Featured eyebrow (Portuguese)", name: "featured_eyebrow_pt", widget: "string" }
+          - { label: "Featured hook line 1 (English)", name: "featured_hookLine1_en", widget: "string" }
+          - { label: "Featured hook line 1 (Portuguese)", name: "featured_hookLine1_pt", widget: "string" }
+          - { label: "Featured hook line 2 (English)", name: "featured_hookLine2_en", widget: "string" }
+          - { label: "Featured hook line 2 (Portuguese)", name: "featured_hookLine2_pt", widget: "string" }
+          - { label: "Featured copy lead (English)", name: "featured_copyLead_en", widget: "markdown" }
+          - { label: "Featured copy lead (Portuguese)", name: "featured_copyLead_pt", widget: "markdown" }
+          - { label: "Featured pull quote (English)", name: "featured_pullQuote_en", widget: "markdown" }
+          - { label: "Featured pull quote (Portuguese)", name: "featured_pullQuote_pt", widget: "markdown" }
+          - { label: "Featured photo annotation (English)", name: "featured_annotation_en", widget: "string" }
+          - { label: "Featured photo annotation (Portuguese)", name: "featured_annotation_pt", widget: "string" }
+          - { label: "Featured CTA (English)", name: "featured_cta_en", widget: "string" }
+          - { label: "Featured CTA (Portuguese)", name: "featured_cta_pt", widget: "string" }
+
+          # Duo
+          - { label: "Duo eyebrow (English)", name: "duo_eyebrow_en", widget: "string" }
+          - { label: "Duo eyebrow (Portuguese)", name: "duo_eyebrow_pt", widget: "string" }
+          - { label: "Duo w1 kicker (English)", name: "duo_w1Kicker_en", widget: "string" }
+          - { label: "Duo w1 kicker (Portuguese)", name: "duo_w1Kicker_pt", widget: "string" }
+          - { label: "Duo w2 kicker (English)", name: "duo_w2Kicker_en", widget: "string" }
+          - { label: "Duo w2 kicker (Portuguese)", name: "duo_w2Kicker_pt", widget: "string" }
+
+          # List experiences
+          - { label: "List eyebrow (English)", name: "listExp_eyebrow_en", widget: "string" }
+          - { label: "List eyebrow (Portuguese)", name: "listExp_eyebrow_pt", widget: "string" }
+          - { label: "List lead prefix (English)", name: "listExp_leadPrefix_en", widget: "string" }
+          - { label: "List lead prefix (Portuguese)", name: "listExp_leadPrefix_pt", widget: "string" }
+          - { label: "List lead emphasis (English)", name: "listExp_leadEmph_en", widget: "string" }
+          - { label: "List lead emphasis (Portuguese)", name: "listExp_leadEmph_pt", widget: "string" }
+          - { label: "List CTA — all experiences (English)", name: "listExp_ctaAll_en", widget: "string" }
+          - { label: "List CTA — all experiences (Portuguese)", name: "listExp_ctaAll_pt", widget: "string" }
+
+          # Why list
+          - { label: "Why eyebrow (English)", name: "whyList_eyebrow_en", widget: "string" }
+          - { label: "Why eyebrow (Portuguese)", name: "whyList_eyebrow_pt", widget: "string" }
+          - { label: "Why h2 (English)", name: "whyList_h2_en", widget: "string" }
+          - { label: "Why h2 (Portuguese)", name: "whyList_h2_pt", widget: "string" }
+          - { label: "Why body (English)", name: "whyList_body_en", widget: "markdown" }
+          - { label: "Why body (Portuguese)", name: "whyList_body_pt", widget: "markdown" }
+          - { label: "Why ask (English)", name: "whyList_ask_en", widget: "string" }
+          - { label: "Why ask (Portuguese)", name: "whyList_ask_pt", widget: "string" }
+
+          # Proof
+          - { label: "Proof h2 line 1 (English)", name: "proof_h2Line1_en", widget: "string" }
+          - { label: "Proof h2 line 1 (Portuguese)", name: "proof_h2Line1_pt", widget: "string" }
+          - { label: "Proof h2 line 2 (English)", name: "proof_h2Line2_en", widget: "string" }
+          - { label: "Proof h2 line 2 (Portuguese)", name: "proof_h2Line2_pt", widget: "string" }
+          - { label: "Proof lead (English)", name: "proof_lead_en", widget: "markdown" }
+          - { label: "Proof lead (Portuguese)", name: "proof_lead_pt", widget: "markdown" }
+          - { label: "Proof CTA (English)", name: "proof_cta_en", widget: "string" }
+          - { label: "Proof CTA (Portuguese)", name: "proof_cta_pt", widget: "string" }
+
+          # Founders teaser
+          - { label: "Founders teaser eyebrow (English)", name: "founders_eyebrow_en", widget: "string" }
+          - { label: "Founders teaser eyebrow (Portuguese)", name: "founders_eyebrow_pt", widget: "string" }
+          - { label: "Founders teaser h2 line 1 (English)", name: "founders_h2Line1_en", widget: "string" }
+          - { label: "Founders teaser h2 line 1 (Portuguese)", name: "founders_h2Line1_pt", widget: "string" }
+          - { label: "Founders teaser h2 line 2 (English)", name: "founders_h2Line2_en", widget: "string" }
+          - { label: "Founders teaser h2 line 2 (Portuguese)", name: "founders_h2Line2_pt", widget: "string" }
+          - { label: "Founders teaser body (English)", name: "founders_body_en", widget: "markdown" }
+          - { label: "Founders teaser body (Portuguese)", name: "founders_body_pt", widget: "markdown" }
+          - { label: "Founders teaser CTA (English)", name: "founders_ctaMore_en", widget: "string" }
+          - { label: "Founders teaser CTA (Portuguese)", name: "founders_ctaMore_pt", widget: "string" }
+
+          # CTA band
+          - { label: "CTA eyebrow (English)", name: "cta_eyebrow_en", widget: "string" }
+          - { label: "CTA eyebrow (Portuguese)", name: "cta_eyebrow_pt", widget: "string" }
+          - { label: "CTA h2 (English)", name: "cta_h2_en", widget: "string" }
+          - { label: "CTA h2 (Portuguese)", name: "cta_h2_pt", widget: "string" }
+          - { label: "CTA lead (English)", name: "cta_lead_en", widget: "markdown" }
+          - { label: "CTA lead (Portuguese)", name: "cta_lead_pt", widget: "markdown" }
+          - { label: "CTA obrigado (English)", name: "cta_obrigado_en", widget: "string" }
+          - { label: "CTA obrigado (Portuguese)", name: "cta_obrigado_pt", widget: "string" }
+          - { label: "CTA WhatsApp label (English)", name: "cta_whatsapp_en", widget: "string" }
+          - { label: "CTA WhatsApp label (Portuguese)", name: "cta_whatsapp_pt", widget: "string" }
+          - { label: "CTA Email label (English)", name: "cta_email_en", widget: "string" }
+          - { label: "CTA Email label (Portuguese)", name: "cta_email_pt", widget: "string" }
+
+      - name: "about"
+        label: "About page copy"
+        file: "src/content/pages/about.yml"
+        fields:
+          - { label: "Eyebrow (English)", name: "eyebrow_en", widget: "string" }
+          - { label: "Eyebrow (Portuguese)", name: "eyebrow_pt", widget: "string" }
+          - { label: "H1 line 1 (English)", name: "h1Line1_en", widget: "string" }
+          - { label: "H1 line 1 (Portuguese)", name: "h1Line1_pt", widget: "string" }
+          - { label: "H1 line 2 (English)", name: "h1Line2_en", widget: "string" }
+          - { label: "H1 line 2 (Portuguese)", name: "h1Line2_pt", widget: "string" }
+          - { label: "Lead (English)", name: "lead_en", widget: "markdown" }
+          - { label: "Lead (Portuguese)", name: "lead_pt", widget: "markdown" }
+          - { label: "Story H2 (English)", name: "storyH2_en", widget: "string" }
+          - { label: "Story H2 (Portuguese)", name: "storyH2_pt", widget: "string" }
+          - { label: "Story paragraph 1 (English)", name: "storyPara1_en", widget: "markdown" }
+          - { label: "Story paragraph 1 (Portuguese)", name: "storyPara1_pt", widget: "markdown" }
+          - { label: "Story paragraph 2 (English)", name: "storyPara2_en", widget: "markdown" }
+          - { label: "Story paragraph 2 (Portuguese)", name: "storyPara2_pt", widget: "markdown" }
+          - { label: "Story paragraph 3 (English)", name: "storyPara3_en", widget: "markdown" }
+          - { label: "Story paragraph 3 (Portuguese)", name: "storyPara3_pt", widget: "markdown" }
+          - { label: "Story paragraph 4 (English)", name: "storyPara4_en", widget: "markdown" }
+          - { label: "Story paragraph 4 (Portuguese)", name: "storyPara4_pt", widget: "markdown" }
+          - { label: "Story signature (English)", name: "storySig_en", widget: "string" }
+          - { label: "Story signature (Portuguese)", name: "storySig_pt", widget: "string" }
+          - { label: "Meet-the-team H2 (English)", name: "meetH2_en", widget: "string" }
+          - { label: "Meet-the-team H2 (Portuguese)", name: "meetH2_pt", widget: "string" }
+          - { label: "Why-Aveiro eyebrow (English)", name: "whyEyebrow_en", widget: "string" }
+          - { label: "Why-Aveiro eyebrow (Portuguese)", name: "whyEyebrow_pt", widget: "string" }
+          - { label: "Why-Aveiro H2 line 1 (English)", name: "whyH2Line1_en", widget: "string" }
+          - { label: "Why-Aveiro H2 line 1 (Portuguese)", name: "whyH2Line1_pt", widget: "string" }
+          - { label: "Why-Aveiro H2 line 2 (English)", name: "whyH2Line2_en", widget: "string" }
+          - { label: "Why-Aveiro H2 line 2 (Portuguese)", name: "whyH2Line2_pt", widget: "string" }
+          - { label: "Why-Aveiro lead (English)", name: "whyLead_en", widget: "markdown" }
+          - { label: "Why-Aveiro lead (Portuguese)", name: "whyLead_pt", widget: "markdown" }
+          - { label: "Why-Aveiro body (English)", name: "whyBody_en", widget: "markdown" }
+          - { label: "Why-Aveiro body (Portuguese)", name: "whyBody_pt", widget: "markdown" }
+
+      - name: "faq"
+        label: "FAQ page copy"
+        file: "src/content/pages/faq.yml"
+        fields:
+          - { label: "Eyebrow (English)", name: "eyebrow_en", widget: "string" }
+          - { label: "Eyebrow (Portuguese)", name: "eyebrow_pt", widget: "string" }
+          - { label: "H1 line 1 (English)", name: "h1Line1_en", widget: "string" }
+          - { label: "H1 line 1 (Portuguese)", name: "h1Line1_pt", widget: "string" }
+          - { label: "H1 line 2 (English)", name: "h1Line2_en", widget: "string" }
+          - { label: "H1 line 2 (Portuguese)", name: "h1Line2_pt", widget: "string" }
+          - { label: "Lead (English)", name: "lead_en", widget: "markdown" }
+          - { label: "Lead (Portuguese)", name: "lead_pt", widget: "markdown" }
+          - { label: "Still-curious hand text (English)", name: "stillCurious_en", widget: "string" }
+          - { label: "Still-curious hand text (Portuguese)", name: "stillCurious_pt", widget: "string" }
+          - { label: "WhatsApp CTA (English)", name: "whatsappCta_en", widget: "string" }
+          - { label: "WhatsApp CTA (Portuguese)", name: "whatsappCta_pt", widget: "string" }
+          - { label: "Email CTA (English)", name: "emailCta_en", widget: "string" }
+          - { label: "Email CTA (Portuguese)", name: "emailCta_pt", widget: "string" }
+
+      - name: "contact"
+        label: "Contact page copy"
+        file: "src/content/pages/contact.yml"
+        fields:
+          - { label: "Eyebrow (English)", name: "eyebrow_en", widget: "string" }
+          - { label: "Eyebrow (Portuguese)", name: "eyebrow_pt", widget: "string" }
+          - { label: "H1 line 1 (English)", name: "h1Line1_en", widget: "string" }
+          - { label: "H1 line 1 (Portuguese)", name: "h1Line1_pt", widget: "string" }
+          - { label: "H1 line 2 (English)", name: "h1Line2_en", widget: "string" }
+          - { label: "H1 line 2 (Portuguese)", name: "h1Line2_pt", widget: "string" }
+          - { label: "Lead (English)", name: "lead_en", widget: "markdown" }
+          - { label: "Lead (Portuguese)", name: "lead_pt", widget: "markdown" }
+          - { label: "WhatsApp label (English)", name: "whatsappLabel_en", widget: "string" }
+          - { label: "WhatsApp label (Portuguese)", name: "whatsappLabel_pt", widget: "string" }
+          - { label: "WhatsApp hint (English)", name: "whatsappHint_en", widget: "string" }
+          - { label: "WhatsApp hint (Portuguese)", name: "whatsappHint_pt", widget: "string" }
+          - { label: "Email label (English)", name: "emailLabel_en", widget: "string" }
+          - { label: "Email label (Portuguese)", name: "emailLabel_pt", widget: "string" }
+          - { label: "Email hint (English)", name: "emailHint_en", widget: "string" }
+          - { label: "Email hint (Portuguese)", name: "emailHint_pt", widget: "string" }
+          - { label: "Instagram label (English)", name: "instaLabel_en", widget: "string" }
+          - { label: "Instagram label (Portuguese)", name: "instaLabel_pt", widget: "string" }
+          - { label: "Instagram hint (English)", name: "instaHint_en", widget: "string" }
+          - { label: "Instagram hint (Portuguese)", name: "instaHint_pt", widget: "string" }
+          - { label: "TripAdvisor label (English)", name: "taLabel_en", widget: "string" }
+          - { label: "TripAdvisor label (Portuguese)", name: "taLabel_pt", widget: "string" }
+          - { label: "TripAdvisor value (English)", name: "taValue_en", widget: "string" }
+          - { label: "TripAdvisor value (Portuguese)", name: "taValue_pt", widget: "string" }
+          - { label: "TripAdvisor hint (English)", name: "taHint_en", widget: "string" }
+          - { label: "TripAdvisor hint (Portuguese)", name: "taHint_pt", widget: "string" }
+          - { label: "Based-in label (English)", name: "basedLabel_en", widget: "string" }
+          - { label: "Based-in label (Portuguese)", name: "basedLabel_pt", widget: "string" }
+          - { label: "Based-in value (English)", name: "basedValue_en", widget: "string" }
+          - { label: "Based-in value (Portuguese)", name: "basedValue_pt", widget: "string" }
+          - { label: "Based-in hint (English)", name: "basedHint_en", widget: "string" }
+          - { label: "Based-in hint (Portuguese)", name: "basedHint_pt", widget: "string" }
+          - { label: "Form: Name (English)", name: "fName_en", widget: "string" }
+          - { label: "Form: Name (Portuguese)", name: "fName_pt", widget: "string" }
+          - { label: "Form: Email (English)", name: "fEmail_en", widget: "string" }
+          - { label: "Form: Email (Portuguese)", name: "fEmail_pt", widget: "string" }
+          - { label: "Form: Dates (English)", name: "fDates_en", widget: "string" }
+          - { label: "Form: Dates (Portuguese)", name: "fDates_pt", widget: "string" }
+          - { label: "Form: Dates placeholder (English)", name: "fDatesPh_en", widget: "string" }
+          - { label: "Form: Dates placeholder (Portuguese)", name: "fDatesPh_pt", widget: "string" }
+          - { label: "Form: People (English)", name: "fPeople_en", widget: "string" }
+          - { label: "Form: People (Portuguese)", name: "fPeople_pt", widget: "string" }
+          - { label: "Form: People placeholder (English)", name: "fPeoplePh_en", widget: "string" }
+          - { label: "Form: People placeholder (Portuguese)", name: "fPeoplePh_pt", widget: "string" }
+          - { label: "Form: Interests (English)", name: "fInterests_en", widget: "string" }
+          - { label: "Form: Interests (Portuguese)", name: "fInterests_pt", widget: "string" }
+          - { label: "Form: Notes (English)", name: "fNotes_en", widget: "string" }
+          - { label: "Form: Notes (Portuguese)", name: "fNotes_pt", widget: "string" }
+          - { label: "Form: Notes placeholder (English)", name: "fNotesPh_en", widget: "string" }
+          - { label: "Form: Notes placeholder (Portuguese)", name: "fNotesPh_pt", widget: "string" }
+          - { label: "Form: Submit (English)", name: "fSubmit_en", widget: "string" }
+          - { label: "Form: Submit (Portuguese)", name: "fSubmit_pt", widget: "string" }
+          - { label: "Form: Note part A (English)", name: "fNoteA_en", widget: "string" }
+          - { label: "Form: Note part A (Portuguese)", name: "fNoteA_pt", widget: "string" }
+          - { label: "Form: Note link text (English)", name: "fNoteB_en", widget: "string" }
+          - { label: "Form: Note link text (Portuguese)", name: "fNoteB_pt", widget: "string" }
+          - { label: "Form: Note part C (English)", name: "fNoteC_en", widget: "string" }
+          - { label: "Form: Note part C (Portuguese)", name: "fNoteC_pt", widget: "string" }
+          - { label: "Interest option — Something custom (English)", name: "interestSomethingCustom_en", widget: "string" }
+          - { label: "Interest option — Something custom (Portuguese)", name: "interestSomethingCustom_pt", widget: "string" }
+
+      - name: "experiences-index"
+        label: "Experiences index page copy"
+        file: "src/content/pages/experiences-index.yml"
+        fields:
+          - { label: "Eyebrow (English)", name: "eyebrow_en", widget: "string" }
+          - { label: "Eyebrow (Portuguese)", name: "eyebrow_pt", widget: "string" }
+          - { label: "H1 line 1 (English)", name: "h1Line1_en", widget: "string" }
+          - { label: "H1 line 1 (Portuguese)", name: "h1Line1_pt", widget: "string" }
+          - { label: "H1 line 2 (English)", name: "h1Line2_en", widget: "string" }
+          - { label: "H1 line 2 (Portuguese)", name: "h1Line2_pt", widget: "string" }
+          - { label: "Lead (English)", name: "lead_en", widget: "markdown" }
+          - { label: "Lead (Portuguese)", name: "lead_pt", widget: "markdown" }
+          - { label: "Core eyebrow (English)", name: "coreEyebrow_en", widget: "string" }
+          - { label: "Core eyebrow (Portuguese)", name: "coreEyebrow_pt", widget: "string" }
+          - { label: "Core H2 (English)", name: "coreH2_en", widget: "string" }
+          - { label: "Core H2 (Portuguese)", name: "coreH2_pt", widget: "string" }
+          - { label: "More eyebrow (English)", name: "moreEyebrow_en", widget: "string" }
+          - { label: "More eyebrow (Portuguese)", name: "moreEyebrow_pt", widget: "string" }
+          - { label: "More H2 (English)", name: "moreH2_en", widget: "string" }
+          - { label: "More H2 (Portuguese)", name: "moreH2_pt", widget: "string" }
+          - { label: "More lead (English)", name: "moreLead_en", widget: "markdown" }
+          - { label: "More lead (Portuguese)", name: "moreLead_pt", widget: "markdown" }
+          - { label: "Custom eyebrow (English)", name: "customEyebrow_en", widget: "string" }
+          - { label: "Custom eyebrow (Portuguese)", name: "customEyebrow_pt", widget: "string" }
+          - { label: "Custom H2 (English)", name: "customH2_en", widget: "string" }
+          - { label: "Custom H2 (Portuguese)", name: "customH2_pt", widget: "string" }
+          - { label: "Custom lead (English)", name: "customLead_en", widget: "markdown" }
+          - { label: "Custom lead (Portuguese)", name: "customLead_pt", widget: "markdown" }
+
+      - name: "experience-detail"
+        label: "Experience detail page copy"
+        file: "src/content/pages/experience-detail.yml"
+        fields:
+          - { label: "Back-link text (English)", name: "backLink_en", widget: "string" }
+          - { label: "Back-link text (Portuguese)", name: "backLink_pt", widget: "string" }
+          - { label: "Sidebar — Duration label (English)", name: "sideDuration_en", widget: "string" }
+          - { label: "Sidebar — Duration label (Portuguese)", name: "sideDuration_pt", widget: "string" }
+          - { label: "Sidebar — Group size label (English)", name: "sideGroup_en", widget: "string" }
+          - { label: "Sidebar — Group size label (Portuguese)", name: "sideGroup_pt", widget: "string" }
+          - { label: "Sidebar — Group size text (English)", name: "sideGroupText_en", widget: "string" }
+          - { label: "Sidebar — Group size text (Portuguese)", name: "sideGroupText_pt", widget: "string" }
+          - { label: "Sidebar — Languages label (English)", name: "sideLanguages_en", widget: "string" }
+          - { label: "Sidebar — Languages label (Portuguese)", name: "sideLanguages_pt", widget: "string" }
+          - { label: "Sidebar — Languages text (English)", name: "sideLanguagesText_en", widget: "string" }
+          - { label: "Sidebar — Languages text (Portuguese)", name: "sideLanguagesText_pt", widget: "string" }
+          - { label: "Sidebar — Price label (English)", name: "sidePrice_en", widget: "string" }
+          - { label: "Sidebar — Price label (Portuguese)", name: "sidePrice_pt", widget: "string" }
+          - { label: "CTA — Quote (English)", name: "ctaQuote_en", widget: "string" }
+          - { label: "CTA — Quote (Portuguese)", name: "ctaQuote_pt", widget: "string" }
+          - { label: "CTA — Email (English)", name: "ctaEmail_en", widget: "string" }
+          - { label: "CTA — Email (Portuguese)", name: "ctaEmail_pt", widget: "string" }
+          - { label: "Included heading (English)", name: "included_en", widget: "string" }
+          - { label: "Included heading (Portuguese)", name: "included_pt", widget: "string" }
+          - { label: "Add-ons heading (English)", name: "addOns_en", widget: "string" }
+          - { label: "Add-ons heading (Portuguese)", name: "addOns_pt", widget: "string" }
+          - { label: "Note hand text (English)", name: "noteHand_en", widget: "string" }
+          - { label: "Note hand text (Portuguese)", name: "noteHand_pt", widget: "string" }
+          - { label: "Note body (English)", name: "noteBody_en", widget: "markdown" }
+          - { label: "Note body (Portuguese)", name: "noteBody_pt", widget: "markdown" }
+          - { label: "Note signature (English)", name: "noteSig_en", widget: "string" }
+          - { label: "Note signature (Portuguese)", name: "noteSig_pt", widget: "string" }
+          - { label: "Gallery eyebrow (English)", name: "galleryEyebrow_en", widget: "string" }
+          - { label: "Gallery eyebrow (Portuguese)", name: "galleryEyebrow_pt", widget: "string" }
+          - { label: "Gallery H2 (English)", name: "galleryH2_en", widget: "string" }
+          - { label: "Gallery H2 (Portuguese)", name: "galleryH2_pt", widget: "string" }
+          - { label: "Related eyebrow (English)", name: "relatedEyebrow_en", widget: "string" }
+          - { label: "Related eyebrow (Portuguese)", name: "relatedEyebrow_pt", widget: "string" }
+          - { label: "Related H2 (English)", name: "relatedH2_en", widget: "string" }
+          - { label: "Related H2 (Portuguese)", name: "relatedH2_pt", widget: "string" }

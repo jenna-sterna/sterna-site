@@ -1,11 +1,14 @@
 ---
-import { company, navKeys, href, path } from "../lib/data";
+import { navKeys, href, path } from "../lib/data";
 import { loadFeaturedExperiences } from "../lib/experiences";
-import { getT, getLangFromUrl, type Lang } from "../lib/i18n";
+import { getLangFromUrl, type Lang } from "../lib/i18n";
+import { getCompany, getPage, pick } from "../lib/siteData";
 
 interface Props { lang?: Lang; }
 const lang: Lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
-const t = getT(lang);
+const company = await getCompany();
+const footer = await getPage("footer");
+const nav = await getPage("nav");
 const year = new Date().getFullYear();
 const featured = (await loadFeaturedExperiences()).slice(0, 6);
 ---
@@ -14,25 +17,25 @@ const featured = (await loadFeaturedExperiences()).slice(0, 6);
   <div class="container footer-grid">
     <div class="foot-brand">
       <a href={lang === "pt" ? "/pt/" : "/"} class="foot-word">Sterna <span>Aveiro Experiences</span></a>
-      <p class="foot-tag">{t.footer.tagline}</p>
+      <p class="foot-tag">{pick(footer, "tagline", lang)}</p>
       <div class="foot-badges">
-        <span class="chip">{t.footer.chip1}</span>
-        <span class="chip">{t.footer.chip2}</span>
-        <span class="chip">{t.footer.chip3}</span>
+        <span class="chip">{pick(footer, "chip1", lang)}</span>
+        <span class="chip">{pick(footer, "chip2", lang)}</span>
+        <span class="chip">{pick(footer, "chip3", lang)}</span>
       </div>
     </div>
 
     <div class="foot-col">
-      <h5>{t.footer.colExplore}</h5>
+      <h5>{pick(footer, "colExplore", lang)}</h5>
       <ul>
         {navKeys.map((link) => (
-          <li><a href={href(link, lang)}>{t.nav[link.key as keyof typeof t.nav]}</a></li>
+          <li><a href={href(link, lang)}>{pick(nav, link.key, lang)}</a></li>
         ))}
       </ul>
     </div>
 
     <div class="foot-col">
-      <h5>{t.footer.colExperiences}</h5>
+      <h5>{pick(footer, "colExperiences", lang)}</h5>
       <ul>
         {featured.map((e) => (
           <li><a href={path(`/experiences/${e.slug}/`, lang)}>{e.short[lang]}</a></li>
@@ -41,19 +44,19 @@ const featured = (await loadFeaturedExperiences()).slice(0, 6);
     </div>
 
     <div class="foot-col foot-contact">
-      <h5>{t.footer.colContact}</h5>
+      <h5>{pick(footer, "colContact", lang)}</h5>
       <ul>
         <li><a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp {company.whatsapp}</a></li>
         <li><a href={company.emailHref}>{company.email}</a></li>
         <li><a href={company.instagramUrl} target="_blank" rel="noopener">Instagram {company.instagramHandle}</a></li>
-        <li><a href={company.tripadvisorUrl} target="_blank" rel="noopener">TripAdvisor · {t.proof.cta.replace(" →", "")}</a></li>
+        <li><a href={company.tripadvisorUrl} target="_blank" rel="noopener">TripAdvisor · {pick(footer, "tripadvisorLinkText", lang)}</a></li>
       </ul>
     </div>
   </div>
 
   <div class="container foot-bottom">
-    <p>{t.footer.rightsPrefix} {year} {company.name}. {t.footer.rightsSuffix}</p>
-    <p class="obrigado">{t.footer.obrigado}</p>
+    <p>{pick(footer, "rightsPrefix", lang)} {year} {company.name}. {pick(footer, "rightsSuffix", lang)}</p>
+    <p class="obrigado">{pick(footer, "obrigado", lang)}</p>
   </div>
 </footer>
 

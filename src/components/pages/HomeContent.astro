@@ -1,14 +1,15 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import ExperienceCard from "../ExperienceCard.astro";
-import { company, path } from "../../lib/data";
+import { path } from "../../lib/data";
 import { loadExperiences, loadFeaturedExperiences } from "../../lib/experiences";
-import { getT, type Lang } from "../../lib/i18n";
-import { reviews } from "../../lib/reviews";
+import type { Lang } from "../../lib/i18n";
+import { getCompany, getPage, getReviews, pick } from "../../lib/siteData";
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
-const t = getT(lang);
+const home = await getPage("home");
+const company = await getCompany();
+const reviews = await getReviews();
 
 const experiences = await loadExperiences();
 const featuredExperiences = await loadFeaturedExperiences();
@@ -27,6 +28,9 @@ const saltPans = bySlug["salt-pans-lunch"];
 const walking = bySlug["walking-tour"];
 const mealhada = bySlug["mealhada-sparkling-wine"];
 const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) => bySlug[s]);
+
+const introBody = pick(home, "intro_body", lang);
+const featuredAnnotation = pick(home, "featured_annotation", lang);
 ---
 
 <Layout lang={lang}>
@@ -45,27 +49,27 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
 
     <div class="container hero-inner">
       <div class="hero-text">
-        <span class="hero-eyebrow">{t.hero.eyebrow}</span>
+        <span class="hero-eyebrow">{pick(home, "hero_eyebrow", lang)}</span>
         <h1 class="hero-h1">
-          <span class="mask-line" data-stagger-index="0"><span>{t.hero.line1}</span></span>
-          <span class="mask-line" data-stagger-index="1"><span>{t.hero.line2}</span></span>
-          <span class="mask-line hero-italic" data-stagger-index="2"><span>{t.hero.line3}</span></span>
+          <span class="mask-line" data-stagger-index="0"><span>{pick(home, "hero_line1", lang)}</span></span>
+          <span class="mask-line" data-stagger-index="1"><span>{pick(home, "hero_line2", lang)}</span></span>
+          <span class="mask-line hero-italic" data-stagger-index="2"><span>{pick(home, "hero_line3", lang)}</span></span>
         </h1>
-        <p class="hero-lead reveal" data-stagger-index="3">{t.hero.lead}</p>
+        <p class="hero-lead reveal" data-stagger-index="3">{pick(home, "hero_lead", lang)}</p>
         <div class="hero-ctas reveal" data-stagger-index="4">
           <a href={path("/experiences/", lang)} class="btn btn-primary btn-lg">
-            {t.hero.ctaPrimary}
+            {pick(home, "hero_ctaPrimary", lang)}
             <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </a>
           <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-ghost btn-lg hero-ghost">
-            {t.hero.ctaSecondary}
+            {pick(home, "hero_ctaSecondary", lang)}
           </a>
         </div>
       </div>
     </div>
 
     <div class="hero-scroll">
-      <span>{t.hero.scroll}</span>
+      <span>{pick(home, "hero_scroll", lang)}</span>
       <span class="hero-scroll-line"></span>
     </div>
   </section>
@@ -73,11 +77,11 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
   <!-- ================= INTRO (magazine-style with drop cap, no promise band) ================= -->
   <section class="intro">
     <div class="container-narrow">
-      <p class="intro-caption reveal">{t.intro.caption}</p>
+      <p class="intro-caption reveal">{pick(home, "intro_caption", lang)}</p>
       <p class="intro-body reveal">
-        <span class="dropcap">A</span>{t.intro.body.slice(1)}
+        <span class="dropcap">{introBody.charAt(0)}</span>{introBody.slice(1)}
       </p>
-      <p class="hand intro-sig reveal">{t.intro.sig}</p>
+      <p class="hand intro-sig reveal">{pick(home, "intro_sig", lang)}</p>
     </div>
   </section>
 
@@ -104,7 +108,7 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
           <img src={saltPansImgB} alt="Salt pan detail" loading="lazy" />
         </div>
         <div class="annotation reveal" aria-hidden="true">
-          <span class="anno-text">{t.featured.annotation}</span>
+          <span class="anno-text">{featuredAnnotation}</span>
           <svg class="anno-arrow" viewBox="0 0 80 50" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 40 C 20 30, 40 15, 74 6"/>
             <path d="M66 4 L 74 6 L 70 13"/>
@@ -114,20 +118,20 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
 
       <div class="feature-body">
         <div class="section-marker">
-          <span class="marker-num">{t.featured.number}</span>
+          <span class="marker-num">{pick(home, "featured_number", lang)}</span>
           <span class="marker-line"></span>
-          <span class="marker-label">{t.featured.eyebrow}</span>
+          <span class="marker-label">{pick(home, "featured_eyebrow", lang)}</span>
         </div>
         <h2 class="feature-h2">
-          <span class="mask-line"><span>{t.featured.hookLine1}</span></span>
-          <span class="mask-line feature-h2-emph"><span>{t.featured.hookLine2}</span></span>
+          <span class="mask-line"><span>{pick(home, "featured_hookLine1", lang)}</span></span>
+          <span class="mask-line feature-h2-emph"><span>{pick(home, "featured_hookLine2", lang)}</span></span>
         </h2>
-        <p class="feature-lead reveal">{t.featured.copyLead}</p>
+        <p class="feature-lead reveal">{pick(home, "featured_copyLead", lang)}</p>
         <blockquote class="feature-pullquote reveal">
-          <p>&ldquo;{t.featured.pullQuote}&rdquo;</p>
+          <p>&ldquo;{pick(home, "featured_pullQuote", lang)}&rdquo;</p>
         </blockquote>
         <a href={path(`/experiences/${saltPans.slug}/`, lang)} class="link-arrow reveal">
-          {t.featured.cta}
+          {pick(home, "featured_cta", lang)}
           <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -139,13 +143,13 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
     <div class="container">
       <div class="duo-marker">
         <span class="marker-line"></span>
-        <span class="marker-label">{t.duo.eyebrow}</span>
+        <span class="marker-label">{pick(home, "duo_eyebrow", lang)}</span>
       </div>
 
       <div class="duo-grid" data-reveal-group>
         <!-- Walking Tour -->
         <a href={path(`/experiences/${walking.slug}/`, lang)} class="duo-item" data-stagger-index="0">
-          <div class="duo-kicker">{t.duo.w1Kicker}</div>
+          <div class="duo-kicker">{pick(home, "duo_w1Kicker", lang)}</div>
           <div class="duo-photo photo-reveal">
             <img src={walkingImg} alt={walking.name[lang]} loading="lazy" />
           </div>
@@ -159,7 +163,7 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
 
         <!-- Mealhada -->
         <a href={path(`/experiences/${mealhada.slug}/`, lang)} class="duo-item duo-item-tilt" data-stagger-index="1">
-          <div class="duo-kicker">{t.duo.w2Kicker}</div>
+          <div class="duo-kicker">{pick(home, "duo_w2Kicker", lang)}</div>
           <div class="duo-photo photo-reveal">
             <img src={mealhada.heroPhoto} alt={mealhada.name[lang]} loading="lazy" />
           </div>
@@ -180,10 +184,10 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
       <div class="list-intro">
         <div class="list-marker">
           <span class="marker-line"></span>
-          <span class="marker-label">{t.listExp.eyebrow}</span>
+          <span class="marker-label">{pick(home, "listExp_eyebrow", lang)}</span>
         </div>
         <p class="list-lead reveal">
-          {t.listExp.leadPrefix} <em>{t.listExp.leadEmph}</em>
+          {pick(home, "listExp_leadPrefix", lang)} <em>{pick(home, "listExp_leadEmph", lang)}</em>
         </p>
       </div>
 
@@ -206,7 +210,7 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
 
       <div class="list-foot reveal">
         <a href={path("/experiences/", lang)} class="btn btn-ghost">
-          {t.listExp.ctaAll}
+          {pick(home, "listExp_ctaAll", lang)}
           <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -218,13 +222,13 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
     <div class="container why-inner">
       <div class="why-marker">
         <span class="marker-line"></span>
-        <span class="marker-label">{t.whyList.eyebrow}</span>
+        <span class="marker-label">{pick(home, "whyList_eyebrow", lang)}</span>
       </div>
       <h2 class="why-h2">
-        <span class="mask-line"><span>{t.whyList.h2}</span></span>
+        <span class="mask-line"><span>{pick(home, "whyList_h2", lang)}</span></span>
       </h2>
-      <p class="why-body reveal">{t.whyList.body}</p>
-      <p class="why-ask reveal hand">{t.whyList.ask}</p>
+      <p class="why-body reveal">{pick(home, "whyList_body", lang)}</p>
+      <p class="why-ask reveal hand">{pick(home, "whyList_ask", lang)}</p>
     </div>
   </section>
 
@@ -233,21 +237,20 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
     <div class="container">
       <div class="proof-head">
         <h2>
-          <span class="mask-line"><span>{t.proof.h2Line1}</span></span>
-          <span class="mask-line proof-h2-emph"><span>{t.proof.h2Line2}</span></span>
+          <span class="mask-line"><span>{pick(home, "proof_h2Line1", lang)}</span></span>
+          <span class="mask-line proof-h2-emph"><span>{pick(home, "proof_h2Line2", lang)}</span></span>
         </h2>
-        <p class="proof-lead reveal">{t.proof.lead}</p>
+        <p class="proof-lead reveal">{pick(home, "proof_lead", lang)}</p>
       </div>
 
       <div class="reviews-grid" data-reveal-group>
         {reviews.slice(0, 6).map((r, i) => (
           <figure class="review-card" data-stagger-index={i}>
-            <div class="review-stars" aria-label="Five stars">★★★★★</div>
-            <blockquote>{r.quote}</blockquote>
+            <div class="review-stars" aria-label="Five stars">{"★".repeat(r.rating)}</div>
+            <blockquote>{lang === "pt" ? r.quotePt : r.quoteEn}</blockquote>
             <figcaption>
-              <span class="review-name">{r.name}</span>
-              {r.location && <span class="review-meta"> · {r.location}</span>}
-              <span class="review-meta"> · {r.visited}</span>
+              <span class="review-name">{r.authorName}</span>
+              <span class="review-meta"> · {r.authorMeta}</span>
             </figcaption>
           </figure>
         ))}
@@ -255,7 +258,7 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
 
       <div class="proof-foot reveal">
         <a href={company.tripadvisorUrl} target="_blank" rel="noopener" class="proof-cta">
-          {t.proof.cta}
+          {pick(home, "proof_cta", lang)}
         </a>
       </div>
     </div>
@@ -267,15 +270,15 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
       <div class="founders-copy">
         <div class="section-marker">
           <span class="marker-line"></span>
-          <span class="marker-label">{t.founders.eyebrow}</span>
+          <span class="marker-label">{pick(home, "founders_eyebrow", lang)}</span>
         </div>
         <h2 class="founders-h2">
-          <span class="mask-line"><span>{t.founders.h2Line1}</span></span>
-          <span class="mask-line founders-h2-emph"><span>{t.founders.h2Line2}</span></span>
+          <span class="mask-line"><span>{pick(home, "founders_h2Line1", lang)}</span></span>
+          <span class="mask-line founders-h2-emph"><span>{pick(home, "founders_h2Line2", lang)}</span></span>
         </h2>
-        <p class="founders-body reveal">{t.founders.body}</p>
+        <p class="founders-body reveal">{pick(home, "founders_body", lang)}</p>
         <a href={path("/about/", lang)} class="link-arrow reveal">
-          {t.founders.ctaMore}
+          {pick(home, "founders_ctaMore", lang)}
           <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -292,14 +295,14 @@ const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) =>
   <section class="cta-band">
     <div class="container cta-inner">
       <div class="cta-copy">
-        <h2 class="cta-h2">{t.cta.h2}</h2>
-        <p class="cta-lead">{t.cta.lead} <span class="hand">{t.cta.obrigado}</span></p>
+        <h2 class="cta-h2">{pick(home, "cta_h2", lang)}</h2>
+        <p class="cta-lead">{pick(home, "cta_lead", lang)} <span class="hand">{pick(home, "cta_obrigado", lang)}</span></p>
       </div>
       <div class="cta-actions">
         <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-ochre btn-lg">
-          {t.cta.whatsapp} {company.whatsapp}
+          {pick(home, "cta_whatsapp", lang)} {company.whatsapp}
         </a>
-        <a href={company.emailHref} class="btn btn-ghost btn-lg cta-ghost">{t.cta.email}</a>
+        <a href={company.emailHref} class="btn btn-ghost btn-lg cta-ghost">{pick(home, "cta_email", lang)}</a>
       </div>
     </div>
   </section>

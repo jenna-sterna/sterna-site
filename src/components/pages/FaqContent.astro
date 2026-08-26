@@ -1,51 +1,56 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { company } from "../../lib/data";
-import { getT, type Lang } from "../../lib/i18n";
+import type { Lang } from "../../lib/i18n";
+import { getCompany, getFaqs, getPage, pick } from "../../lib/siteData";
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
-const t = getT(lang);
+const faq = await getPage("faq");
+const company = await getCompany();
+const faqs = await getFaqs();
 
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: t.faqs.map((f) => ({
+  mainEntity: faqs.map((f) => ({
     "@type": "Question",
-    name: f.q,
-    acceptedAnswer: { "@type": "Answer", text: f.a },
+    name: lang === "pt" ? f.questionPt : f.questionEn,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: lang === "pt" ? f.answerPt : f.answerEn,
+    },
   })),
 };
 ---
 
-<Layout lang={lang} title={`${t.faq.eyebrow} · ${company.name}`}>
+<Layout lang={lang} title={`${pick(faq, "eyebrow", lang)} · ${company.name}`}>
   <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
 
   <section class="page-hero">
     <div class="container">
-      <p class="page-eyebrow">{t.faq.eyebrow}</p>
+      <p class="page-eyebrow">{pick(faq, "eyebrow", lang)}</p>
       <h1 class="page-h1">
-        <span class="mask-line" data-stagger-index="0"><span>{t.faq.h1Line1}</span></span>
-        <span class="mask-line hero-italic" data-stagger-index="1"><span>{t.faq.h1Line2}</span></span>
+        <span class="mask-line" data-stagger-index="0"><span>{pick(faq, "h1Line1", lang)}</span></span>
+        <span class="mask-line hero-italic" data-stagger-index="1"><span>{pick(faq, "h1Line2", lang)}</span></span>
       </h1>
-      <p class="page-lead reveal" data-stagger-index="2">{t.faq.lead}</p>
+      <p class="page-lead reveal" data-stagger-index="2">{pick(faq, "lead", lang)}</p>
     </div>
   </section>
 
   <section class="faq-section">
     <div class="container-narrow">
       <ul class="faq-list" data-reveal-group>
-        {t.faqs.map((f, i) => (
+        {faqs.map((f, i) => (
           <li class="faq-item reveal" data-stagger-index={i}>
             <details>
               <summary>
-                <span>{f.q}</span>
+                <span>{lang === "pt" ? f.questionPt : f.questionEn}</span>
                 <span class="chev" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
                 </span>
               </summary>
               <div class="answer">
-                <p>{f.a}</p>
+                <p>{lang === "pt" ? f.answerPt : f.answerEn}</p>
               </div>
             </details>
           </li>
@@ -53,10 +58,10 @@ const faqSchema = {
       </ul>
 
       <div class="faq-cta reveal">
-        <span class="hand">{t.faq.stillCurious}</span>
+        <span class="hand">{pick(faq, "stillCurious", lang)}</span>
         <div class="faq-cta-btns">
-          <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-primary">{t.faq.whatsappCta}</a>
-          <a href={company.emailHref} class="btn btn-ghost">{t.faq.emailCta}</a>
+          <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-primary">{pick(faq, "whatsappCta", lang)}</a>
+          <a href={company.emailHref} class="btn btn-ghost">{pick(faq, "emailCta", lang)}</a>
         </div>
       </div>
     </div>

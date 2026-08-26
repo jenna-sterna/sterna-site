@@ -1,17 +1,20 @@
 ---
-import { company, navKeys, href } from "../lib/data";
-import { getT, getLangFromUrl, swapLangUrl, type Lang } from "../lib/i18n";
+import { navKeys, href } from "../lib/data";
+import { getLangFromUrl, swapLangUrl, type Lang } from "../lib/i18n";
+import { getCompany, getPage, pick } from "../lib/siteData";
 
 interface Props {
   lang?: Lang;
 }
 
 const lang: Lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
-const t = getT(lang);
+const company = await getCompany();
+const nav = await getPage("nav");
 const enUrl = swapLangUrl(Astro.url.pathname, "en");
 const ptUrl = swapLangUrl(Astro.url.pathname, "pt");
 const path = Astro.url.pathname;
 const homeHref = lang === "pt" ? "/pt/" : "/";
+const whatsappLabel = pick(nav, "whatsapp", lang);
 ---
 
 <header class="site-header">
@@ -28,7 +31,7 @@ const homeHref = lang === "pt" ? "/pt/" : "/";
           return (
             <li>
               <a href={linkHref} aria-current={isCurrent ? "page" : undefined}>
-                {t.nav[link.key as keyof typeof t.nav]}
+                {pick(nav, link.key, lang)}
               </a>
             </li>
           );
@@ -52,7 +55,7 @@ const homeHref = lang === "pt" ? "/pt/" : "/";
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M20.52 3.449C12.831-3.984.106 1.407.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652a11.882 11.882 0 005.688 1.448h.005c9.436 0 14.833-9.877 10.492-17.855-.708-1.303-1.775-2.427-3-3.492zM12.028 21.786a9.82 9.82 0 01-5.011-1.371l-.36-.214-3.723.976 1.001-3.639-.235-.376A9.822 9.822 0 012.24 12.05c0-5.407 4.4-9.807 9.807-9.807 2.62 0 5.081 1.02 6.937 2.876a9.746 9.746 0 012.868 6.943c-.005 5.407-4.404 9.807-9.824 9.807z"/>
         </svg>
-        {t.nav.whatsapp}
+        {whatsappLabel}
       </a>
     </div>
 
@@ -72,7 +75,7 @@ const homeHref = lang === "pt" ? "/pt/" : "/";
         {navKeys.map((link) => (
           <li>
             <a href={href(link, lang)}>
-              {t.nav[link.key as keyof typeof t.nav]}
+              {pick(nav, link.key, lang)}
             </a>
           </li>
         ))}

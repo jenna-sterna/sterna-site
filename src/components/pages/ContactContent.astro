@@ -1,25 +1,25 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { company } from "../../lib/data";
-import { getT, type Lang } from "../../lib/i18n";
+import type { Lang } from "../../lib/i18n";
 import { loadExperiences } from "../../lib/experiences";
+import { getCompany, getPage, pick } from "../../lib/siteData";
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
-const t = getT(lang);
-
+const contact = await getPage("contact");
+const company = await getCompany();
 const experiences = await loadExperiences();
 ---
 
-<Layout lang={lang} title={`${t.contact.eyebrow} · ${company.name}`}>
+<Layout lang={lang} title={`${pick(contact, "eyebrow", lang)} · ${company.name}`}>
   <section class="page-hero">
     <div class="container">
-      <p class="page-eyebrow">{t.contact.eyebrow}</p>
+      <p class="page-eyebrow">{pick(contact, "eyebrow", lang)}</p>
       <h1 class="page-h1">
-        <span class="mask-line" data-stagger-index="0"><span>{t.contact.h1Line1}</span></span>
-        <span class="mask-line hero-italic" data-stagger-index="1"><span>{t.contact.h1Line2}</span></span>
+        <span class="mask-line" data-stagger-index="0"><span>{pick(contact, "h1Line1", lang)}</span></span>
+        <span class="mask-line hero-italic" data-stagger-index="1"><span>{pick(contact, "h1Line2", lang)}</span></span>
       </h1>
-      <p class="page-lead reveal" data-stagger-index="2">{t.contact.lead}</p>
+      <p class="page-lead reveal" data-stagger-index="2">{pick(contact, "lead", lang)}</p>
     </div>
   </section>
 
@@ -27,61 +27,61 @@ const experiences = await loadExperiences();
     <div class="container contact-grid">
       <aside class="contact-side">
         <div class="contact-block">
-          <span class="contact-eyebrow">{t.contact.whatsappLabel}</span>
+          <span class="contact-eyebrow">{pick(contact, "whatsappLabel", lang)}</span>
           <a href={company.whatsappHref} target="_blank" rel="noopener" class="contact-line">{company.whatsapp}</a>
-          <p>{t.contact.whatsappHint}</p>
+          <p>{pick(contact, "whatsappHint", lang)}</p>
         </div>
 
         <div class="contact-block">
-          <span class="contact-eyebrow">{t.contact.emailLabel}</span>
+          <span class="contact-eyebrow">{pick(contact, "emailLabel", lang)}</span>
           <a href={company.emailHref} class="contact-line">{company.email}</a>
-          <p>{t.contact.emailHint}</p>
+          <p>{pick(contact, "emailHint", lang)}</p>
         </div>
 
         <div class="contact-block">
-          <span class="contact-eyebrow">{t.contact.instaLabel}</span>
+          <span class="contact-eyebrow">{pick(contact, "instaLabel", lang)}</span>
           <a href={company.instagramUrl} target="_blank" rel="noopener" class="contact-line">{company.instagramHandle}</a>
-          <p>{t.contact.instaHint}</p>
+          <p>{pick(contact, "instaHint", lang)}</p>
         </div>
 
         <div class="contact-block">
-          <span class="contact-eyebrow">{t.contact.taLabel}</span>
-          <a href={company.tripadvisorUrl} target="_blank" rel="noopener" class="contact-line">{t.contact.taValue}</a>
-          <p>{t.contact.taHint}</p>
+          <span class="contact-eyebrow">{pick(contact, "taLabel", lang)}</span>
+          <a href={company.tripadvisorUrl} target="_blank" rel="noopener" class="contact-line">{pick(contact, "taValue", lang)}</a>
+          <p>{pick(contact, "taHint", lang)}</p>
         </div>
 
         <div class="contact-block">
-          <span class="contact-eyebrow">{t.contact.basedLabel}</span>
-          <span class="contact-line">{t.contact.basedValue}</span>
-          <p>{t.contact.basedHint}</p>
+          <span class="contact-eyebrow">{pick(contact, "basedLabel", lang)}</span>
+          <span class="contact-line">{pick(contact, "basedValue", lang)}</span>
+          <p>{pick(contact, "basedHint", lang)}</p>
         </div>
       </aside>
 
       <div class="contact-form-wrap">
         <form class="contact-form" data-email={company.email}>
           <div class="field">
-            <label for="name">{t.contact.fName}</label>
+            <label for="name">{pick(contact, "fName", lang)}</label>
             <input id="name" name="name" type="text" required autocomplete="name" />
           </div>
 
           <div class="field">
-            <label for="email">{t.contact.fEmail}</label>
+            <label for="email">{pick(contact, "fEmail", lang)}</label>
             <input id="email" name="email" type="email" required autocomplete="email" />
           </div>
 
           <div class="row">
             <div class="field">
-              <label for="dates">{t.contact.fDates}</label>
-              <input id="dates" name="dates" type="text" placeholder={t.contact.fDatesPh} />
+              <label for="dates">{pick(contact, "fDates", lang)}</label>
+              <input id="dates" name="dates" type="text" placeholder={pick(contact, "fDatesPh", lang)} />
             </div>
             <div class="field">
-              <label for="people">{t.contact.fPeople}</label>
-              <input id="people" name="people" type="number" min="1" max="20" placeholder={t.contact.fPeoplePh} />
+              <label for="people">{pick(contact, "fPeople", lang)}</label>
+              <input id="people" name="people" type="number" min="1" max="20" placeholder={pick(contact, "fPeoplePh", lang)} />
             </div>
           </div>
 
           <fieldset class="field">
-            <legend>{t.contact.fInterests}</legend>
+            <legend>{pick(contact, "fInterests", lang)}</legend>
             <div class="checks">
               {experiences.map((exp) => (
                 <label>
@@ -89,24 +89,24 @@ const experiences = await loadExperiences();
                 </label>
               ))}
               <label>
-                <input type="checkbox" name="interests" value="Something custom"/> {t.contact.interestSomethingCustom}
+                <input type="checkbox" name="interests" value="Something custom"/> {pick(contact, "interestSomethingCustom", lang)}
               </label>
             </div>
           </fieldset>
 
           <div class="field">
-            <label for="notes">{t.contact.fNotes}</label>
-            <textarea id="notes" name="notes" rows="5" placeholder={t.contact.fNotesPh}></textarea>
+            <label for="notes">{pick(contact, "fNotes", lang)}</label>
+            <textarea id="notes" name="notes" rows="5" placeholder={pick(contact, "fNotesPh", lang)}></textarea>
           </div>
 
           <div class="form-actions">
             <button type="submit" class="btn btn-primary btn-lg">
-              {t.contact.fSubmit}
+              {pick(contact, "fSubmit", lang)}
               <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
             </button>
             <p class="form-note">
-              {t.contact.fNoteA}{" "}
-              <a href={company.whatsappHref} target="_blank" rel="noopener">{t.contact.fNoteB}</a>{t.contact.fNoteC}
+              {pick(contact, "fNoteA", lang)}{" "}
+              <a href={company.whatsappHref} target="_blank" rel="noopener">{pick(contact, "fNoteB", lang)}</a>{pick(contact, "fNoteC", lang)}
             </p>
           </div>
         </form>

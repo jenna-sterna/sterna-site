@@ -2,12 +2,14 @@
 import Layout from "../../layouts/Layout.astro";
 import ExperienceCard from "../ExperienceCard.astro";
 import { loadExperiences, type Experience } from "../../lib/experiences";
-import { company, path } from "../../lib/data";
-import { getT, type Lang } from "../../lib/i18n";
+import { path } from "../../lib/data";
+import type { Lang } from "../../lib/i18n";
+import { getCompany, getPage, pick } from "../../lib/siteData";
 
 interface Props { exp: Experience; lang: Lang; }
 const { exp, lang } = Astro.props;
-const t = getT(lang);
+const detail = await getPage("experience-detail");
+const company = await getCompany();
 
 const heroImage = exp.heroPhoto || null;
 const gallery = exp.gallery || [];
@@ -29,7 +31,7 @@ const related = [...relatedPool.filter((e) => e.featured), ...relatedPool.filter
     </div>
 
     <div class="container xp-hero-inner">
-      <a href={path("/experiences/", lang)} class="back-link">{t.xpDetail.backLink}</a>
+      <a href={path("/experiences/", lang)} class="back-link">{pick(detail, "backLink", lang)}</a>
       <span class="xp-hero-cat">{exp.categoryLabel[lang]} · {exp.duration[lang]}</span>
       <h1 class="xp-hero-h1">
         <span class="mask-line" data-stagger-index="0"><span>{exp.name[lang]}</span></span>
@@ -42,28 +44,28 @@ const related = [...relatedPool.filter((e) => e.featured), ...relatedPool.filter
     <div class="container xp-details-grid">
       <aside class="xp-side">
         <div class="side-block">
-          <h4>{t.xpDetail.sideDuration}</h4>
+          <h4>{pick(detail, "sideDuration", lang)}</h4>
           <p>{exp.duration[lang]}</p>
         </div>
         <div class="side-block">
-          <h4>{t.xpDetail.sideGroup}</h4>
-          <p>{t.xpDetail.sideGroupText}</p>
+          <h4>{pick(detail, "sideGroup", lang)}</h4>
+          <p>{pick(detail, "sideGroupText", lang)}</p>
         </div>
         <div class="side-block">
-          <h4>{t.xpDetail.sideLanguages}</h4>
-          <p>{t.xpDetail.sideLanguagesText}</p>
+          <h4>{pick(detail, "sideLanguages", lang)}</h4>
+          <p>{pick(detail, "sideLanguagesText", lang)}</p>
         </div>
         <div class="side-block">
-          <h4>{t.xpDetail.sidePrice}</h4>
+          <h4>{pick(detail, "sidePrice", lang)}</h4>
           <p>{exp.priceNote[lang]}</p>
         </div>
 
         <div class="side-cta">
           <a href={company.whatsappHref} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-            {t.xpDetail.ctaQuote}
+            {pick(detail, "ctaQuote", lang)}
           </a>
           <a href={company.emailHref} class="btn btn-ghost">
-            {t.xpDetail.ctaEmail}
+            {pick(detail, "ctaEmail", lang)}
           </a>
         </div>
       </aside>
@@ -78,7 +80,7 @@ const related = [...relatedPool.filter((e) => e.featured), ...relatedPool.filter
         )}
 
         <div class="xp-included reveal">
-          <h3>{t.xpDetail.included}</h3>
+          <h3>{pick(detail, "included", lang)}</h3>
           <ul>
             {exp.included[lang].map((i) => <li>{i}</li>)}
           </ul>
@@ -86,7 +88,7 @@ const related = [...relatedPool.filter((e) => e.featured), ...relatedPool.filter
 
         {exp.addOns && (
           <div class="xp-included reveal">
-            <h3>{t.xpDetail.addOns}</h3>
+            <h3>{pick(detail, "addOns", lang)}</h3>
             <ul class="addons">
               {exp.addOns[lang].map((i) => <li>{i}</li>)}
             </ul>
@@ -94,9 +96,9 @@ const related = [...relatedPool.filter((e) => e.featured), ...relatedPool.filter
         )}
 
         <div class="xp-note reveal">
-          <p class="hand">{t.xpDetail.noteHand}</p>
-          <p>{t.xpDetail.noteBody}</p>
-          <p><span class="hand">{t.xpDetail.noteSig}</span></p>
+          <p class="hand">{pick(detail, "noteHand", lang)}</p>
+          <p>{pick(detail, "noteBody", lang)}</p>
+          <p><span class="hand">{pick(detail, "noteSig", lang)}</span></p>
         </div>
       </div>
     </div>
@@ -105,8 +107,8 @@ const related = [...relatedPool.filter((e) => e.featured), ...relatedPool.filter
   {gallery.length > 0 && (
     <section class="xp-gallery">
       <div class="container">
-        <p class="page-eyebrow">{t.xpDetail.galleryEyebrow}</p>
-        <h2 class="mask-line"><span>{t.xpDetail.galleryH2}</span></h2>
+        <p class="page-eyebrow">{pick(detail, "galleryEyebrow", lang)}</p>
+        <h2 class="mask-line"><span>{pick(detail, "galleryH2", lang)}</span></h2>
 
         <div class="gallery-grid" data-reveal-group>
           {gallery.map((img, i) => (
@@ -123,9 +125,9 @@ const related = [...relatedPool.filter((e) => e.featured), ...relatedPool.filter
     <div class="container">
       <div class="section-marker">
         <span class="marker-line"></span>
-        <span class="marker-label">{t.xpDetail.relatedEyebrow}</span>
+        <span class="marker-label">{pick(detail, "relatedEyebrow", lang)}</span>
       </div>
-      <h2 class="mask-line section-h2"><span>{t.xpDetail.relatedH2}</span></h2>
+      <h2 class="mask-line section-h2"><span>{pick(detail, "relatedH2", lang)}</span></h2>
 
       <div class="xp-grid" data-reveal-group>
         {related.map((r, i) => (
