@@ -2,11 +2,14 @@
 // Runs once per session on cold visit. Waits for fonts + hero image
 // so the fade to page is seamless (no font flash, no image pop-in).
 // ~1.4s minimum, ~2.5s cap. No skip button.
+import { getCompany, imageUrl } from "../lib/sanity";
+const company = await getCompany();
+const logoSrc = imageUrl(company.logo) ?? "/uploads/brand/sterna-experiences-full.png";
 ---
 
 <div class="preloader" id="preloader" data-preloader hidden aria-hidden="true">
   <div class="preloader-inner">
-    <img class="preloader-mark" src="/uploads/brand/sterna-experiences-full.png" alt="Sterna Aveiro Experiences" />
+    <img class="preloader-mark" src={logoSrc} alt={company.name || "Sterna Aveiro Experiences"} />
   </div>
 </div>
 

@@ -76,6 +76,11 @@ const ABOUT_PHOTOS = {
   whyImage:   "/uploads/boat-tour/20260704_204620~2.jpg",
 };
 
+const COMPANY_PHOTOS = {
+  logo:    "/uploads/brand/sterna-experiences-full.png",
+  ogImage: "/og-default.jpg",
+};
+
 /* ────────────────────────────────────────────────────────────────────────
    Idempotent upload — reuses the same asset if the same file bytes are
    uploaded twice, so re-running never duplicates.
@@ -140,6 +145,10 @@ async function run() {
   console.log("");
   console.log("\u2192 About-page photos");
   await patchDocument("aboutPage", ABOUT_PHOTOS);
+
+  console.log("");
+  console.log("\u2192 Company assets (logo + social share image)");
+  await patchDocument("company", COMPANY_PHOTOS);
 
   console.log("");
   console.log("\u2713 Done. Editors can now swap any of these photos from the Studio (Photos section).");

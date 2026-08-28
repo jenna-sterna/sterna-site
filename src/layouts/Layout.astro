@@ -5,7 +5,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Preloader from "../components/Preloader.astro";
 import { getLangFromUrl, type Lang } from "../lib/i18n";
-import { getCompany, getPage, pick } from "../lib/sanity";
+import { getCompany, getPage, pick, imageUrl } from "../lib/sanity";
 
 interface Props {
   title?: string;
@@ -22,7 +22,7 @@ const meta = await getPage("meta");
 const {
   title = `${pick(meta, "defaultTitle", lang)} · ${pick(meta, "titleSuffix", lang)}`,
   description = pick(meta, "defaultDescription", lang),
-  image = "/og-default.jpg",
+  image = imageUrl(company.ogImage) ?? "/og-default.jpg",
   noindex = false,
 } = Astro.props;
 

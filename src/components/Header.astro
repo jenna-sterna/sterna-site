@@ -1,7 +1,7 @@
 ---
 import { navKeys, href } from "../lib/data";
 import { getLangFromUrl, swapLangUrl, type Lang } from "../lib/i18n";
-import { getCompany, getPage, pick } from "../lib/sanity";
+import { getCompany, getPage, pick, imageUrl } from "../lib/sanity";
 
 interface Props {
   lang?: Lang;
@@ -15,12 +15,13 @@ const ptUrl = swapLangUrl(Astro.url.pathname, "pt");
 const path = Astro.url.pathname;
 const homeHref = lang === "pt" ? "/pt/" : "/";
 const whatsappLabel = pick(nav, "whatsapp", lang);
+const logoSrc = imageUrl(company.logo) ?? "/uploads/brand/sterna-experiences-full.png";
 ---
 
 <header class="site-header">
   <div class="container header-inner">
     <a href={homeHref} class="brand" aria-label={`${company.name} · home`}>
-      <img src="/uploads/brand/sterna-experiences-full.png" alt={company.name} class="brand-logo" />
+      <img src={logoSrc} alt={company.name} class="brand-logo" />
     </a>
 
     <nav class="primary-nav" aria-label="Primary">

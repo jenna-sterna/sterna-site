@@ -114,6 +114,20 @@ export default defineType({
       description: "The number used in copy ‘Small groups (max X)’.",
       type: "number",
     }),
+    defineField({
+      name: "logo",
+      title: "Logo",
+      description: "The Sterna wordmark shown in the header (top-left) and preloader. PNG with transparency preferred, ~1200px wide.",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "ogImage",
+      title: "Social sharing preview image",
+      description: "Shown when the site link is shared on Facebook/WhatsApp/Slack/etc. Landscape 1200×630px works best.",
+      type: "image",
+      options: { hotspot: true },
+    }),
   ],
   preview: {
     prepare: () => ({ title: "Contact info" }),
