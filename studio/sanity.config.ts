@@ -16,6 +16,7 @@ import { deskStructure } from "./deskStructure";
 export default defineConfig({
   name: "sterna-aveiro",
   title: "Sterna Aveiro",
+  basePath: "/studio",
   projectId: "jghpyuue",
   dataset: "production",
   plugins: [
