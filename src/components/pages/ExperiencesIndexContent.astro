@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import ExperienceCard from "../ExperienceCard.astro";
 import { loadFeaturedExperiences, loadMoreExperiences } from "../../lib/experiences";
 import type { Lang } from "../../lib/i18n";
-import { getCompany, getPage, pick } from "../../lib/siteData";
+import { getCompany, getPage, pick } from "../../lib/sanity";
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;

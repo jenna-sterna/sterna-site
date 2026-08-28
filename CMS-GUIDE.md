@@ -1,74 +1,105 @@
-# Editing your Sterna Aveiro Tours website
+# Sandra's guide to editing the website
 
-Hi Sandra! This is how you update the site yourself — no coding needed.
+Everything on the Sterna Aveiro website — words, photos, prices, contact
+info — lives in a small dashboard called **Sanity Studio**. This guide walks
+through the essentials.
 
-## Where to log in
+## Signing in
 
-Go to **https://sterna.pt/admin/**
+1. Open **[sterna-aveiro.sanity.studio](https://sterna-aveiro.sanity.studio)**
+   in any browser.
+2. Sign in with the same email address Braiden used when he invited you.
+   You'll get a magic link — click it and you're in.
 
-Sign in with the email address Braiden invited you with. First time only: check your email for an invitation link and set a password.
+If you don't see an invite, ask Braiden to send one (he can invite you from
+the Sanity dashboard → Members → Invite).
 
-## What you can edit
+## The layout
 
-Right now, you can fully edit the **9 experiences** — everything on those pages, in both English and Portuguese:
+Once you're in, the left sidebar has three groups:
 
-- Name of the experience
-- Short tagline (used on cards)
-- Full description
-- Duration
-- What's included (add/remove items)
-- Optional add-ons
-- Price note
-- Main photo + gallery photos
-- Which category it's in
-- Whether it appears on the homepage's "featured 6"
-- The order they appear in
+### Content
+Things you add/remove/reorder as they change.
 
-## How to edit an experience
+- **Experiences** — the nine (or however many) trips you offer. Add, edit,
+  duplicate, or archive. Each one has bilingual (English/Portuguese) fields.
+- **Founders** — you, Carlos, Jenna. Photos, roles, one-liners.
+- **FAQs** — the questions on the /faq page.
+- **Reviews** — verbatim TripAdvisor / Google reviews shown on the homepage
+  and about page.
 
-1. Log in at `/admin/`
-2. Click **"Experiences"** on the left
-3. Click the experience you want to edit
-4. Change any field
-5. Scroll to the top and click **"Publish"** → **"Publish now"**
-6. Wait ~90 seconds. The site rebuilds automatically. Refresh your public site — the change is live.
+### Pages
+The words on each page. These are single, fixed documents (not lists) — you
+edit them, you don't create new ones.
 
-## How to upload a photo
+- **Homepage** — every section on `/` and `/pt/` (hero, intro, featured,
+  duos, why, proof, founders teaser, CTA).
+- **About page** — copy for `/about/` and `/pt/about/`.
+- **FAQ page (intro copy)** — the headline & intro at the top of the FAQ page
+  (individual questions live under Content → FAQs).
+- **Contact page** — labels for the contact page, contact-side blocks, and
+  the enquiry form.
+- **Experiences page (intro copy)** — headline + intros for the experiences
+  index page.
+- **Experience detail (shared labels)** — the labels shared across every
+  experience page (side info, "What's included", "Related", etc.).
+- **Navigation labels** — the words in the top nav (Home, Experiences, About,
+  FAQ, Contact, plus the WhatsApp button).
+- **Footer** — tagline, column headings, copyright line.
+- **Site meta (SEO)** — default page title & description used by Google and
+  when someone shares a link.
 
-1. Click the photo field (Main photo, or a Gallery photo)
-2. Click **"Choose an image"**
-3. Drag your photo in, or click "Upload new" — it uploads to the media library
-4. Pick your photo from the library and confirm
+### Site
+Contact information and trust markers used across the whole site.
 
-**Tip:** photos should be at least 2000px wide (a normal iPhone photo is fine). Landscape works better than portrait for main photos.
+- **Contact info** — phone, WhatsApp, email, Instagram, TripAdvisor, address,
+  max group size, etc.
+- **Trust badges** — the small "Licensed & insured / 300+ reviews" chips.
 
-## How to add a whole new experience
+## Everyday tasks
 
-1. Click **"Experiences"** → **"New Experience"**
-2. Fill in every field. Both English AND Portuguese.
-3. Give it a URL slug (like `island-picnic` — lowercase, dashes only, no spaces)
-4. Give it a display order (10, 11, 12…) — lower numbers appear first
-5. Set featured on/off
-6. Add photos
-7. Click Publish
+**Change a photo.** Click the section (e.g. Experiences → Salt pans lunch),
+scroll to the photo field, click the existing photo, and choose "Replace".
+Upload a new one. Click **Publish** in the bottom-right.
 
-## What you CAN'T edit here (yet)
+**Fix a typo.** Find the copy in the relevant page section. Click into the
+field, edit, click **Publish**.
 
-- Design, colors, fonts, animations, layout
-- FAQs
-- The About page / founder bios
-- Contact info (phone, WhatsApp, email)
-- The Home page hero, intro text, section headings
-- Menu items
+**Add a new experience.** Content → Experiences → **Create new**. Fill in
+every field (English + Portuguese). Upload a hero photo (landscape, at least
+1600px wide) and 4–8 gallery photos. Click Publish.
 
-For those — email or WhatsApp Braiden. If you find yourself asking for the same kind of edit repeatedly, tell Braiden and he can add it to the CMS.
+**Reorder something.** Every list (Experiences, Founders, FAQs, Reviews) has
+an **Order** field. Lower numbers appear first. Change the number, publish,
+done.
 
-## Booking (FareHarbor)
+**Preview before publishing.** Sanity keeps a draft as you type. Nothing goes
+live until you click **Publish**.
 
-Booking still goes through FareHarbor as before. Nothing changed there. When you add a new experience in the CMS, you can still keep pointing people to WhatsApp/email for a quote, OR (if you set up that experience in FareHarbor too) we can add a "Book now" button linked to your FareHarbor item ID. Ask Braiden for that.
+**Add or update a review.** Content → Reviews → Create new (or open an
+existing one). Copy the reviewer's name, month/year (and city if visible),
+star rating, and the full quote. Both `Quote (English)` and
+`Quote (Portuguese)` fields are required — for real quotes we typically paste
+the same text into both. Set the `Order` — lower numbers appear first, and
+only the first six show on the homepage.
 
-## Something broken?
+## Bilingual fields (EN / PT)
 
-Text or email Braiden. Do not try to fix code yourself — every change made through the CMS goes into git and can be undone easily.
+Every text field appears twice — once labelled "(English)" and once
+labelled "(Portuguese)". Both are required. If the copy is identical in both
+languages (like a proper noun, a date, or a URL), just paste the same text
+into both.
 
-Obrigada!
+## How changes go live
+
+- **Sanity** publishes instantly — as soon as you click Publish, the new
+  copy is live in Sanity's database.
+- **The website** then rebuilds automatically (this takes ~1–2 minutes).
+  Refresh the site to see your changes.
+
+If the automatic rebuild isn't working, ask Braiden — it may need to be
+re-connected on Netlify's side.
+
+## Something's broken?
+
+WhatsApp Braiden. Screenshots help.

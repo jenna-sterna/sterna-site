@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import { path } from "../../lib/data";
 import { loadExperiences, loadFeaturedExperiences } from "../../lib/experiences";
 import type { Lang } from "../../lib/i18n";
-import { getCompany, getPage, getReviews, pick } from "../../lib/siteData";
+import { getCompany, getPage, getReviews, pick } from "../../lib/sanity";
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
@@ -24,10 +24,21 @@ const walkingImgC = "/uploads/walking-tour/20260702_153535(1).jpg";
 
 // map by slug for the list section
 const bySlug = Object.fromEntries(experiences.map((e) => [e.slug, e]));
-const saltPans = bySlug["salt-pans-lunch"];
-const walking = bySlug["walking-tour"];
-const mealhada = bySlug["mealhada-sparkling-wine"];
-const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"].map((s) => bySlug[s]);
+// Fallback stub — used if Sanity is unreachable/empty (e.g. before migration runs).
+// The build still succeeds; content just renders blank until the CMS is populated.
+const stub = (slug: string) => ({
+  slug,
+  name: { en: "", pt: "" },
+  short: { en: "", pt: "" },
+  oneLiner: { en: "", pt: "" },
+  duration: { en: "", pt: "" },
+  heroPhoto: undefined as string | undefined,
+});
+const saltPans = bySlug["salt-pans-lunch"] ?? stub("salt-pans-lunch");
+const walking = bySlug["walking-tour"] ?? stub("walking-tour");
+const mealhada = bySlug["mealhada-sparkling-wine"] ?? stub("mealhada-sparkling-wine");
+const listExperiences = ["bussaco-luso", "boat-tour", "vista-alegre"]
+  .map((s) => bySlug[s] ?? stub(s));
 
 const introBody = pick(home, "intro_body", lang);
 const featuredAnnotation = pick(home, "featured_annotation", lang);

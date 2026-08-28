@@ -4,7 +4,7 @@ import ExperienceCard from "../ExperienceCard.astro";
 import { loadExperiences, type Experience } from "../../lib/experiences";
 import { path } from "../../lib/data";
 import type { Lang } from "../../lib/i18n";
-import { getCompany, getPage, pick } from "../../lib/siteData";
+import { getCompany, getPage, pick } from "../../lib/sanity";
 
 interface Props { exp: Experience; lang: Lang; }
 const { exp, lang } = Astro.props;

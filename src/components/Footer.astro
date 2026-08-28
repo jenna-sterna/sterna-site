@@ -2,7 +2,7 @@
 import { navKeys, href, path } from "../lib/data";
 import { loadFeaturedExperiences } from "../lib/experiences";
 import { getLangFromUrl, type Lang } from "../lib/i18n";
-import { getCompany, getPage, pick } from "../lib/siteData";
+import { getCompany, getPage, pick } from "../lib/sanity";
 
 interface Props { lang?: Lang; }
 const lang: Lang = Astro.props.lang ?? getLangFromUrl(Astro.url);

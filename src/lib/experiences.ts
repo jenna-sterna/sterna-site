@@ -1,4 +1,12 @@
-import { getCollection } from "astro:content";
+/**
+ * Experiences data layer.
+ *
+ * Fetches from Sanity (was previously astro:content getCollection).
+ * Every field name and the returned Experience shape is preserved so all
+ * consumer components keep working without changes.
+ */
+
+import { sanityClient, urlFor } from "./sanity";
 import type { Lang } from "./i18n";
 
 export type Experience = {
@@ -17,47 +25,65 @@ export type Experience = {
   heroPhoto?: string;
   gallery?: string[];
   press?: {
-    source: string;      // e.g. "Travel + Leisure"
+    source: string;
     quote: { en: string; pt: string };
     url: string;
   };
 };
 
-// Load experiences from the Astro content collection (/src/content/experiences/*.md).
-// Every consumer must `await` this — pages can await at the top of their frontmatter.
+const EXPERIENCES_QUERY = `*[_type == "experience"] | order(order asc){
+  "slug": slug.current,
+  order, featured, category,
+  categoryLabelEn, categoryLabelPt,
+  nameEn, namePt, shortEn, shortPt,
+  oneLinerEn, oneLinerPt,
+  durationEn, durationPt,
+  includedEn, includedPt,
+  addOnsEn, addOnsPt,
+  priceNoteEn, priceNotePt,
+  pressSource, pressUrl, pressQuoteEn, pressQuotePt,
+  "heroPhoto": heroPhoto.asset->url,
+  "gallery": gallery[].asset->url
+}`;
+
+function toExperience(d: any): Experience {
+  const exp: Experience = {
+    slug: d.slug,
+    order: d.order,
+    featured: !!d.featured,
+    category: d.category,
+    categoryLabel: { en: d.categoryLabelEn, pt: d.categoryLabelPt },
+    name: { en: d.nameEn, pt: d.namePt },
+    short: { en: d.shortEn, pt: d.shortPt },
+    oneLiner: { en: d.oneLinerEn, pt: d.oneLinerPt },
+    duration: { en: d.durationEn, pt: d.durationPt },
+    included: { en: d.includedEn || [], pt: d.includedPt || [] },
+    priceNote: { en: d.priceNoteEn, pt: d.priceNotePt },
+    heroPhoto: d.heroPhoto || undefined,
+    gallery: Array.isArray(d.gallery) ? d.gallery.filter(Boolean) : undefined,
+  };
+  if (d.addOnsEn && d.addOnsPt) {
+    exp.addOns = { en: d.addOnsEn, pt: d.addOnsPt };
+  }
+  if (d.pressSource && d.pressUrl && d.pressQuoteEn && d.pressQuotePt) {
+    exp.press = {
+      source: d.pressSource,
+      url: d.pressUrl,
+      quote: { en: d.pressQuoteEn, pt: d.pressQuotePt },
+    };
+  }
+  return exp;
+}
+
 export async function loadExperiences(): Promise<Experience[]> {
-  const entries = await getCollection("experiences");
-  return entries
-    .map((entry) => {
-      const d = entry.data;
-      const exp: Experience = {
-        slug: d.slug,
-        order: d.order,
-        featured: d.featured,
-        category: d.category,
-        categoryLabel: { en: d.categoryLabelEn, pt: d.categoryLabelPt },
-        name: { en: d.nameEn, pt: d.namePt },
-        short: { en: d.shortEn, pt: d.shortPt },
-        oneLiner: { en: d.oneLinerEn, pt: d.oneLinerPt },
-        duration: { en: d.durationEn, pt: d.durationPt },
-        included: { en: d.includedEn, pt: d.includedPt },
-        priceNote: { en: d.priceNoteEn, pt: d.priceNotePt },
-        heroPhoto: d.heroPhoto,
-        gallery: d.gallery,
-      };
-      if (d.addOnsEn && d.addOnsPt) {
-        exp.addOns = { en: d.addOnsEn, pt: d.addOnsPt };
-      }
-      if (d.pressSource && d.pressUrl && d.pressQuoteEn && d.pressQuotePt) {
-        exp.press = {
-          source: d.pressSource,
-          url: d.pressUrl,
-          quote: { en: d.pressQuoteEn, pt: d.pressQuotePt },
-        };
-      }
-      return exp;
-    })
-    .sort((a, b) => a.order - b.order);
+  try {
+    const raw = await sanityClient.fetch<any[]>(EXPERIENCES_QUERY);
+    return (raw || []).map(toExperience);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn("[sanity] Failed to load experiences, returning empty list:", (err as Error).message);
+    return [];
+  }
 }
 
 export async function loadFeaturedExperiences(): Promise<Experience[]> {
@@ -76,3 +102,6 @@ export function localField(
 ): string | string[] {
   return field[lang];
 }
+
+// Re-export for convenience in case a page wants to construct image URLs
+export { urlFor };
