@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import { path } from "../../lib/data";
 import { loadExperiences, loadFeaturedExperiences } from "../../lib/experiences";
 import type { Lang } from "../../lib/i18n";
-import { getCompany, getPage, getReviews, pick } from "../../lib/sanity";
+import { getCompany, getPage, getReviews, imageUrl, pick } from "../../lib/sanity";
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
@@ -14,13 +14,17 @@ const reviews = await getReviews();
 const experiences = await loadExperiences();
 const featuredExperiences = await loadFeaturedExperiences();
 
-// All hero/decor photos now come from the CMS media folder (/public/uploads/).
-const heroImage = "/uploads/hero/aveiro-canal-hero.jpg";
-const saltPansImg = "/uploads/salt-pans/IMG_4709.jpg";
-const saltPansImgB = "/uploads/salt-pans/IMG_4710.jpg";
-const walkingImg = "/uploads/walking-tour/20260711_112249.jpg";
-const walkingImgB = "/uploads/walking-tour/20260711_120135.jpg";
-const walkingImgC = "/uploads/walking-tour/20260702_153535(1).jpg";
+// Photos are editable in Sanity Studio (Homepage → Photos section).
+// If the CMS field is empty, we fall back to the file already on disk so
+// nothing breaks visually and the site continues to build.
+const heroImage    = imageUrl(home.heroImage)         ?? "/uploads/hero/aveiro-canal-hero.jpg";
+const saltPansImg  = imageUrl(home.saltPansImageMain) ?? "/uploads/salt-pans/IMG_4709.jpg";
+const saltPansImgB = imageUrl(home.saltPansImageMini) ?? "/uploads/salt-pans/IMG_4710.jpg";
+const walkingImg   = imageUrl(home.walkingImage)      ?? "/uploads/walking-tour/20260711_112249.jpg";
+// Founders teaser strip — three small photos near the bottom of the page.
+const walkingImgC  = imageUrl(home.foundersPhoto1)    ?? "/uploads/walking-tour/20260702_153535(1).jpg";
+const walkingImgB  = imageUrl(home.foundersPhoto2)    ?? "/uploads/walking-tour/20260711_120135.jpg";
+const foundersPhoto3 = imageUrl(home.foundersPhoto3)  ?? "/uploads/salt-pans/IMG_4710.jpg";
 
 // map by slug for the list section
 const bySlug = Object.fromEntries(experiences.map((e) => [e.slug, e]));
@@ -297,7 +301,7 @@ const featuredAnnotation = pick(home, "featured_annotation", lang);
       <div class="founders-photo-strip" aria-hidden="true">
         <div class="founders-mini photo-reveal"><img src={walkingImgC} alt="" loading="lazy" /></div>
         <div class="founders-mini photo-reveal founders-mini-tilt"><img src={walkingImgB} alt="" loading="lazy" /></div>
-        <div class="founders-mini photo-reveal"><img src={saltPansImgB} alt="" loading="lazy" /></div>
+        <div class="founders-mini photo-reveal"><img src={foundersPhoto3} alt="" loading="lazy" /></div>
       </div>
     </div>
   </section>

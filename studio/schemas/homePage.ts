@@ -1,4 +1,4 @@
-import { defineType } from "sanity";
+import { defineField, defineType } from "sanity";
 import { pairs } from "./_helpers";
 
 /**
@@ -20,8 +20,10 @@ export default defineType({
     { name: "proof",    title: "7. Reviews section",           options: { collapsible: true, collapsed: true } },
     { name: "founders", title: "8. Founders teaser",           options: { collapsible: true, collapsed: true } },
     { name: "cta",      title: "9. Call-to-action band",       options: { collapsible: true, collapsed: true } },
+    { name: "photos",   title: "10. Photos (swap any homepage image)", options: { collapsible: true, collapsed: true } },
   ],
-  fields: pairs([
+  fields: [
+    ...pairs([
     // HERO
     { fieldset: "hero", name: "hero_eyebrow",       title: "Hero eyebrow", description: "Small uppercase tag above the headline (e.g. ‘Aveiro · Portugal’)." },
     { fieldset: "hero", name: "hero_line1",         title: "Hero headline — line 1", description: "First line of the big headline." },
@@ -87,7 +89,74 @@ export default defineType({
     { fieldset: "cta", name: "cta_obrigado",  title: "Handwritten thank-you" },
     { fieldset: "cta", name: "cta_whatsapp",  title: "WhatsApp button label" },
     { fieldset: "cta", name: "cta_email",     title: "Email button label" },
-  ]),
+    ]),
+
+    // Photos — editable image slots. All optional. If left empty the site
+    // falls back to the current hardcoded photo so nothing visually breaks.
+    defineField({
+      name: "heroImage",
+      title: "Hero image (top of homepage)",
+      description:
+        "The big canal photo behind the main headline at the top of the page. Best around 2400×1600. Leave empty to keep the current photo.",
+      type: "image",
+      options: { hotspot: true },
+      fieldset: "photos",
+    }),
+    defineField({
+      name: "saltPansImageMain",
+      title: "Salt pans — main photo (Senhor Álvaro)",
+      description:
+        "The large portrait-shaped salt-pans photo in the ‘Walk the salt pans with the oldest marnoto’ section. Portrait / 4×5 works best.",
+      type: "image",
+      options: { hotspot: true },
+      fieldset: "photos",
+    }),
+    defineField({
+      name: "saltPansImageMini",
+      title: "Salt pans — small overlay photo",
+      description:
+        "The small tilted salt-pans detail photo that overlaps the main one. Any close-up salt-pan photo works.",
+      type: "image",
+      options: { hotspot: true },
+      fieldset: "photos",
+    }),
+    defineField({
+      name: "walkingImage",
+      title: "Walking tour photo (duo section)",
+      description:
+        "The photo on the left card of the two-up section (Walking tour + Mealhada). Landscape / 5×4 works best.",
+      type: "image",
+      options: { hotspot: true },
+      fieldset: "photos",
+    }),
+    defineField({
+      name: "foundersPhoto1",
+      title: "Founders teaser — photo 1 (left)",
+      description:
+        "First of the three small photos in the ‘Meet the three of us’ strip near the bottom of the homepage.",
+      type: "image",
+      options: { hotspot: true },
+      fieldset: "photos",
+    }),
+    defineField({
+      name: "foundersPhoto2",
+      title: "Founders teaser — photo 2 (middle, tilted)",
+      description:
+        "Second (middle, slightly tilted) photo in the founders strip near the bottom of the homepage.",
+      type: "image",
+      options: { hotspot: true },
+      fieldset: "photos",
+    }),
+    defineField({
+      name: "foundersPhoto3",
+      title: "Founders teaser — photo 3 (right)",
+      description:
+        "Third photo in the founders strip near the bottom of the homepage.",
+      type: "image",
+      options: { hotspot: true },
+      fieldset: "photos",
+    }),
+  ],
   preview: {
     prepare: () => ({ title: "Homepage" }),
   },

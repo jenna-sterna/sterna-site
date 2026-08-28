@@ -58,6 +58,30 @@ export function urlFor(source: any): string | undefined {
 }
 
 /**
+ * Convert a Sanity image field (from a page document) to a plain URL string,
+ * or `undefined` if the field is empty. This is what page components use when
+ * they want to fall back to a hardcoded local photo:
+ *
+ *   const heroImage = imageUrl(home.heroImage) ?? "/uploads/hero/default.jpg";
+ *
+ * Accepts the same shapes as `urlFor` (raw string, Sanity image object with
+ * either `asset._ref` or `asset.url`, or `undefined`). Returns `undefined`
+ * when the field is missing so the fallback expression works cleanly.
+ */
+export function imageUrl(source: any): string | undefined {
+  if (!source) return undefined;
+  if (typeof source === "string") return source || undefined;
+  // Sanity image objects always have an `asset` sub-object once uploaded.
+  if (!source.asset) return undefined;
+  if (source.asset.url) return source.asset.url;
+  try {
+    return builder.image(source).auto("format").fit("max").url();
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Safely run a GROQ query. Returns `fallback` if the query fails
  * (e.g. project is unreachable during build). Logs the error so we can
  * see it in the Netlify build log without breaking the build.

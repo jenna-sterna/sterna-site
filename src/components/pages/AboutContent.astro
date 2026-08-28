@@ -2,7 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { path } from "../../lib/data";
 import type { Lang } from "../../lib/i18n";
-import { getCompany, getFounders, getPage, pick } from "../../lib/sanity";
+import { getCompany, getFounders, getPage, imageUrl, pick } from "../../lib/sanity";
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
@@ -11,8 +11,10 @@ const home = await getPage("home"); // for shared CTA copy
 const company = await getCompany();
 const founders = await getFounders();
 
-const bussacoImg = "/uploads/walking-tour/20260711_120135.jpg";
-const boatImg = "/uploads/boat-tour/20260704_204620~2.jpg";
+// Photos are editable in Sanity Studio (About page → Photos section).
+// If the CMS field is empty, we fall back to the file already on disk.
+const bussacoImg = imageUrl(about.storyImage) ?? "/uploads/walking-tour/20260711_120135.jpg";
+const boatImg    = imageUrl(about.whyImage)   ?? "/uploads/boat-tour/20260704_204620~2.jpg";
 const storyPara1 = pick(about, "storyPara1", lang);
 ---
 
