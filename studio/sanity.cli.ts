@@ -11,5 +11,5 @@ export default defineCliConfig({
     dataset: "production",
   },
   studioHost: "sterna-aveiro",
-  autoUpdates: true,
+  autoUpdates: false,
 });
