@@ -26,4 +26,8 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
   },
+  vite: (config) => ({
+    ...config,
+    base: "/studio/",
+  }),
 });
