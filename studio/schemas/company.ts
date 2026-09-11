@@ -81,6 +81,12 @@ export default defineType({
       type: "url",
     }),
     defineField({
+      name: "googleReviewsUrl",
+      title: "Google Reviews URL",
+      description: "Link to your Google Business reviews. Leave blank to hide the Google reviews link.",
+      type: "url",
+    }),
+    defineField({
       name: "reviewCount",
       title: "Review count (display)",
       description: "Free-text — e.g. ‘300+’. Used in trust copy across the site.",

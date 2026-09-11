@@ -23,9 +23,9 @@
   --teal-100: #dfe9ea;
   --teal-50: #eef4f4;
 
-  --ochre-800: #a56820;
-  --ochre-700: #c68b4c;
-  --ochre-500: #e0a86a;
+  --ochre-800: #8a5417;
+  --ochre-700: #a56820;
+  --ochre-500: #b87834;
   --ochre-100: #f4e2c8;
 
   --magenta-700: #b5477a;
@@ -51,8 +51,8 @@
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-hand: "Caveat", cursive;
 
-  --text-eyebrow: 0.75rem;
-  --text-body-sm: 0.9375rem;
+  --text-eyebrow: 0.8125rem;
+  --text-body-sm: 1rem;
   --text-body: 1.0625rem;
   --text-body-lg: 1.1875rem;
   --text-lead: 1.375rem;

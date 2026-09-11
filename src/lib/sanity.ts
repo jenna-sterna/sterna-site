@@ -112,10 +112,13 @@ export type CompanyInfo = {
   instagramHandle: string;
   instagramUrl: string;
   tripadvisorUrl: string;
+  googleReviewsUrl: string;
   reviewCount: string;
   established: number;
   address: { city: string; region: string; country: string };
   maxGroupSize: number;
+  logo?: any;
+  ogImage?: any;
 };
 
 const COMPANY_FALLBACK: CompanyInfo = {
@@ -130,6 +133,7 @@ const COMPANY_FALLBACK: CompanyInfo = {
   instagramHandle: "",
   instagramUrl: "",
   tripadvisorUrl: "",
+  googleReviewsUrl: "",
   reviewCount: "",
   established: new Date().getFullYear(),
   address: { city: "Aveiro", region: "Centro", country: "Portugal" },
@@ -140,9 +144,9 @@ export async function getCompany(): Promise<CompanyInfo> {
   const raw = await safeFetch<any>(
     `*[_type == "company"][0]{
       name, shortName, phone, phoneHref, whatsapp, whatsappHref,
-      email, emailHref, instagramHandle, instagramUrl, tripadvisorUrl,
+      email, emailHref, instagramHandle, instagramUrl, tripadvisorUrl, googleReviewsUrl,
       reviewCount, established, addressCity, addressRegion, addressCountry,
-      maxGroupSize
+      maxGroupSize, logo, ogImage
     }`,
     {},
     null,
@@ -160,6 +164,7 @@ export async function getCompany(): Promise<CompanyInfo> {
     instagramHandle: raw.instagramHandle || "",
     instagramUrl: raw.instagramUrl || "",
     tripadvisorUrl: raw.tripadvisorUrl || "",
+    googleReviewsUrl: raw.googleReviewsUrl || "",
     reviewCount: raw.reviewCount || "",
     established: raw.established || COMPANY_FALLBACK.established,
     address: {
@@ -168,6 +173,8 @@ export async function getCompany(): Promise<CompanyInfo> {
       country: raw.addressCountry || COMPANY_FALLBACK.address.country,
     },
     maxGroupSize: raw.maxGroupSize || COMPANY_FALLBACK.maxGroupSize,
+    logo: raw.logo,
+    ogImage: raw.ogImage,
   };
 }
 

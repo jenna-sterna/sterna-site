@@ -49,7 +49,10 @@ const featured = (await loadFeaturedExperiences()).slice(0, 6);
         <li><a href={company.whatsappHref} target="_blank" rel="noopener">WhatsApp {company.whatsapp}</a></li>
         <li><a href={company.emailHref}>{company.email}</a></li>
         <li><a href={company.instagramUrl} target="_blank" rel="noopener">Instagram {company.instagramHandle}</a></li>
-        <li><a href={company.tripadvisorUrl} target="_blank" rel="noopener">TripAdvisor · {pick(footer, "tripadvisorLinkText", lang)}</a></li>
+        <li><a href={company.tripadvisorUrl} target="_blank" rel="noopener">{pick(footer, "tripadvisorLinkText", lang) || "TripAdvisor reviews"}</a></li>
+        {company.googleReviewsUrl && (
+          <li><a href={company.googleReviewsUrl} target="_blank" rel="noopener">Google reviews</a></li>
+        )}
       </ul>
     </div>
   </div>

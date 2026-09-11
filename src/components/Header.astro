@@ -1,7 +1,8 @@
 ---
-import { navKeys, href } from "../lib/data";
+import { navKeys, href, path as pathFor } from "../lib/data";
 import { getLangFromUrl, swapLangUrl, type Lang } from "../lib/i18n";
 import { getCompany, getPage, pick, imageUrl } from "../lib/sanity";
+import { loadExperiences } from "../lib/experiences";
 
 interface Props {
   lang?: Lang;
@@ -10,6 +11,7 @@ interface Props {
 const lang: Lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
 const company = await getCompany();
 const nav = await getPage("nav");
+const experiences = await loadExperiences();
 const enUrl = swapLangUrl(Astro.url.pathname, "en");
 const ptUrl = swapLangUrl(Astro.url.pathname, "pt");
 const path = Astro.url.pathname;
@@ -29,11 +31,34 @@ const logoSrc = imageUrl(company.logo) ?? "/uploads/brand/sterna-experiences-ful
         {navKeys.map((link) => {
           const linkHref = href(link, lang);
           const isCurrent = path === linkHref || (linkHref !== homeHref && path.startsWith(linkHref));
+          const isExperiences = link.key === "experiences";
           return (
-            <li>
+            <li class:list={{ "has-dropdown": isExperiences }}>
               <a href={linkHref} aria-current={isCurrent ? "page" : undefined}>
                 {pick(nav, link.key, lang)}
+                {isExperiences && (
+                  <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                    <path d="M2 3.5 L5 6.5 L8 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                )}
               </a>
+              {isExperiences && (
+                <div class="dropdown-menu" role="menu">
+                  {experiences.map((e) => (
+                    <a
+                      class="dropdown-item"
+                      role="menuitem"
+                      href={pathFor(`/experiences/${e.slug}/`, lang)}
+                    >
+                      {e.name[lang]}
+                    </a>
+                  ))}
+                  <div class="dropdown-sep" aria-hidden="true"></div>
+                  <a class="dropdown-item dropdown-all" role="menuitem" href={linkHref}>
+                    {pick(nav, "experiences", lang)} →
+                  </a>
+                </div>
+              )}
             </li>
           );
         })}
@@ -135,8 +160,11 @@ const logoSrc = imageUrl(company.logo) ?? "/uploads/brand/sterna-experiences-ful
   }
 
   .primary-nav ul { display: flex; gap: 0.125rem; list-style: none; }
+  .primary-nav li { position: relative; }
   .primary-nav a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     padding: 0.625rem 0.95rem;
     font-size: var(--text-body-sm);
     font-weight: 500;
@@ -146,9 +174,78 @@ const logoSrc = imageUrl(company.logo) ?? "/uploads/brand/sterna-experiences-ful
   }
   .primary-nav a:hover { color: var(--teal-900); background: var(--teal-50); }
   .primary-nav a[aria-current="page"] { color: var(--teal-900); background: var(--teal-50); }
+  .dropdown-arrow {
+    opacity: 0.6;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .has-dropdown:hover .dropdown-arrow,
+  .has-dropdown:focus-within .dropdown-arrow {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+
+  /* Dropdown menu */
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    min-width: 320px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 20px 40px -12px rgba(15, 47, 54, 0.25);
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+    z-index: 60;
+  }
+  .has-dropdown:hover .dropdown-menu,
+  .has-dropdown:focus-within .dropdown-menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+  .dropdown-item {
+    display: block;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    border-radius: 6px;
+    line-height: 1.35;
+    text-decoration: none;
+    transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+  }
+  .dropdown-item:hover {
+    background: var(--teal-50);
+    color: var(--teal-900);
+  }
+  .dropdown-sep {
+    height: 1px;
+    background: var(--line);
+    margin: 0.35rem 0.5rem;
+  }
+  .dropdown-all {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--teal-800);
+  }
 
   .header-cta { display: flex; align-items: center; gap: 0.75rem; }
-  .header-cta .btn-primary { padding: 0.6rem 1.1rem; font-size: 0.85rem; }
+  .header-cta .btn-primary {
+    padding: 0.6rem 1.1rem;
+    font-size: 0.9rem;
+    background: var(--teal-700);
+    color: var(--shell);
+  }
+  .header-cta .btn-primary:hover {
+    background: var(--teal-800);
+  }
 
   .lang-toggle {
     display: inline-flex;
